@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const serverUrl = 'http://localhost:5000';
+const serverUrl = 'https://0fwwkqtc-5000.brs.devtunnels.ms';
 
 const urls = {
     calificacion: {
