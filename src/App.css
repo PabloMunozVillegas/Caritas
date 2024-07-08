@@ -1,38 +1,50 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+.app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  overflow-x: hidden; /* Evita scroll horizontal */
 }
 
-.App-link {
-  color: #61dafb;
+.animated-face-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Espacio entre las caras animadas */
+  max-width: 100%; /* Ajusta al ancho máximo del contenedor */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.animated-face {
+  cursor: pointer;
+  width: 200px; /* Ancho fijo para cada cara animada */
+  height: 200px; /* Altura fija para cada cara animada */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px; /* Borde redondeado para las caras animadas */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+}
+
+#cara5 {
+  order: 1; /* Coloca cara5 al inicio (izquierda) */
+}
+
+#cara4 {
+  order: 2; /* Coloca cara4 después de cara5 */
+}
+
+#cara3 {
+  order: 3; /* Coloca cara3 en el centro */
+}
+
+#cara2 {
+  order: 4; /* Coloca cara2 antes de cara1 */
+}
+
+#cara1 {
+  order: 5; /* Coloca cara1 al final (derecha) */
+}
+
+.calificacion-enviada {
+  margin-top: 20px; /* Margen superior para el texto de calificación enviada */
 }

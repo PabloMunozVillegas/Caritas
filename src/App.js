@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import GreenFace from './Faces3D/ExcelenteFace';
-import MuyMalaFace from './Faces3D/MuyMalaFace';
+import './App.css'; // Importa tus estilos CSS
+import ExcelenteAnimatedFace from './Faces3D/ExcelenteFace';
+import RegularAnimatedFace from './Faces3D/RegularFace';
+import MuyBuenaAnimatedFace from './Faces3D/MuyBuenaFace';
+import MalaAnimatedFace from './Faces3D/MalaFace';
+import MuyMalaAnimatedFace from './Faces3D/MuyMalaFace';
+
 import CalificacionApiPostFunction from './Functions/ApiPostFuncition';
 
 function App() {
@@ -8,8 +13,8 @@ function App() {
 
   const handleClick = async (calificacion) => {
     try {
-      console.log(calificacion)
-      await CalificacionApiPostFunction({ nombre: calificacion, sucursal: 'string'  });
+      console.log(calificacion);
+      await CalificacionApiPostFunction({ nombre: calificacion, sucursal: 'string' });
       setCalificacionEnviada(calificacion); // Actualiza el estado después de enviar la calificación
     } catch (error) {
       console.error('Error al enviar la calificación a la API:', error);
@@ -17,18 +22,30 @@ function App() {
   };
 
   return (
-    <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div onClick={() => handleClick('Excelente')}>
-        <GreenFace />
-      </div>
-      <div onClick={() => handleClick('MuyMala')}>
-        <MuyMalaFace />
+    <div className="app-container">
+      <div className="animated-face-container">
+        <div className="animated-face" id="cara5" onClick={() => handleClick('Excelente')}>
+          <ExcelenteAnimatedFace />
+        </div>
+        <div className="animated-face" id="cara4" onClick={() => handleClick('Bueno')}>
+          <MuyBuenaAnimatedFace />
+        </div>
+        <div className="animated-face" id="cara3" onClick={() => handleClick('Regular')}>
+          <RegularAnimatedFace />
+        </div>
+        <div className="animated-face" id="cara2" onClick={() => handleClick('Mala')}>
+          <MalaAnimatedFace />
+        </div>
+        <div className="animated-face" id="cara1" onClick={() => handleClick('MuyMala')}>
+          <MuyMalaAnimatedFace />
+        </div>
       </div>
       {calificacionEnviada && (
-        <p>Calificación enviada: {calificacionEnviada}</p>
+        <p className="calificacion-enviada">Calificación enviada: {calificacionEnviada}</p>
       )}
     </div>
   );
 }
 
 export default App;
+

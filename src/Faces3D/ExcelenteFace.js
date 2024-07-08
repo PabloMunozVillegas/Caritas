@@ -93,7 +93,7 @@ const ExcelenteFace = () => {
   );
 };
 
-const AnimatedFace = () => (
+const ExcelenteAnimatedFace = () => (
   <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
     <ambientLight intensity={0.5} />
     <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} />
@@ -102,4 +102,4 @@ const AnimatedFace = () => (
   </Canvas>
 );
 
-export default AnimatedFace;
+export default ExcelenteAnimatedFace;
