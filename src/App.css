@@ -10,20 +10,21 @@
 .animated-face-container {
   display: flex;
   justify-content: center;
-  gap: 10px; /* Espacio entre las caras animadas */
+  gap: 20px; /* Espacio entre las caras animadas */
   max-width: 100%; /* Ajusta al ancho máximo del contenedor */
   flex-wrap: wrap; /* Envuelve las caras animadas cuando no hay suficiente espacio */
 }
 
 .animated-face {
   cursor: pointer;
-  width: 200px; /* Ancho fijo para cada cara animada */
-  height: 200px; /* Altura fija para cada cara animada */
+  width: 250px; /* Ancho fijo para cada cara animada */
+  height: 250px; /* Altura fija para cada cara animada */
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px; /* Borde redondeado para las caras animadas */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+  border-radius: 15px; /* Borde redondeado para las caras animadas */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Sombra para resaltar */
+  font-size: 1.5rem; /* Tamaño de fuente para texto dentro de la cara animada */
 }
 
 #cara5 {
@@ -54,14 +55,16 @@
 
 @media (max-width: 768px) {
   .animated-face {
-    width: 150px; /* Reduce el ancho de las caras animadas en pantallas más pequeñas */
-    height: 150px; /* Reduce la altura de las caras animadas en pantallas más pequeñas */
+    width: 200px; /* Reduce el ancho de las caras animadas en pantallas más pequeñas */
+    height: 200px; /* Reduce la altura de las caras animadas en pantallas más pequeñas */
+    font-size: 1.2rem; /* Reducción del tamaño de fuente en pantallas más pequeñas */
   }
 }
 
 @media (max-width: 480px) {
   .animated-face {
-    width: 120px; /* Reducción adicional del ancho en pantallas muy pequeñas */
-    height: 120px; /* Reducción adicional de la altura en pantallas muy pequeñas */
+    width: 150px; /* Reducción adicional del ancho en pantallas muy pequeñas */
+    height: 150px; /* Reducción adicional de la altura en pantallas muy pequeñas */
+    font-size: 1rem; /* Tamaño de fuente más pequeño en pantallas muy pequeñas */
   }
 }
