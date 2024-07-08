@@ -2,7 +2,7 @@ import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const MuyBuenaFace = () => {
+const ExcelenteFace = () => {
   const faceRef = useRef();
   const leftLensRef = useRef();
   const rightLensRef = useRef();
@@ -93,13 +93,13 @@ const MuyBuenaFace = () => {
   );
 };
 
-const MuyBuenaAnimatedFace = () => (
+const AnimatedFace = () => (
   <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
     <ambientLight intensity={0.5} />
     <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} />
     <pointLight position={[10, 10, 10]} />
-    <MuyBuenaFace />
+    <ExcelenteFace />
   </Canvas>
 );
 
-export default MuyBuenaAnimatedFace;
+export default AnimatedFace;

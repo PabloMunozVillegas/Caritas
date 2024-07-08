@@ -11,6 +11,8 @@ const MuyMalaFace = () => {
   const bridgeRef = useRef();
   const tearsLeftRef = useRef();
   const tearsRightRef = useRef();
+  const leftEyebrowRef = useRef();
+  const rightEyebrowRef = useRef();
 
   const [tearsVisible, setTearsVisible] = useState(false);
   const [eyesClosed, setEyesClosed] = useState(false);
@@ -54,8 +56,6 @@ const MuyMalaFace = () => {
       tearsLeftRef.current.visible = false;
       tearsRightRef.current.visible = false;
     }
-
-
   });
 
   useEffect(() => {
@@ -90,6 +90,20 @@ const MuyMalaFace = () => {
           <circleGeometry args={[0.1, 32]} />
           <meshBasicMaterial color="black" />
         </mesh>
+
+        {/* Cejas */}
+        <group position={[0, -0.17, 0.2]}>
+          {/* Ceja izquierda */}
+          <mesh ref={leftEyebrowRef} position={[-0.35, 0.25, 0.2]} rotation={[0, 0, 0]}>
+            <planeGeometry args={[0.2, 0.05]} />
+            <meshBasicMaterial color="black" />
+          </mesh>
+          {/* Ceja derecha */}
+          <mesh ref={rightEyebrowRef} position={[0.35, 0.25, 0.2]} rotation={[0, 0, 0]}>
+            <planeGeometry args={[0.2, 0.05]} />
+            <meshBasicMaterial color="black" />
+          </mesh>
+        </group>
       </group>
 
       {/* Lentes */}
@@ -129,7 +143,7 @@ const MuyMalaFace = () => {
 
       {/* Sonrisa al revés */}
       <group position={[0, -0.3, 0.2]}>
-        <mesh rotation={[Math.PI/1, 0, 0]}>
+        <mesh rotation={[Math.PI / 1, 0, 0]}>
           <circleGeometry args={[0.2, 32, Math.PI, Math.PI]} />
           <meshBasicMaterial color="black" side={THREE.DoubleSide} />
         </mesh>
