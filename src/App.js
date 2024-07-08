@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import GreenFace from './Faces3D/ExcelenteFace';
-import BlueFace from './Faces3D/MuyMalaFace';
+import MuyMalaFace from './Faces3D/MuyMalaFace';
 import CalificacionApiPostFunction from './Functions/ApiPostFuncition';
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
         <GreenFace />
       </div>
       <div onClick={() => handleClick('MuyMala')}>
-        <BlueFace />
+        <MuyMalaFace />
       </div>
       {calificacionEnviada && (
         <p>Calificación enviada: {calificacionEnviada}</p>

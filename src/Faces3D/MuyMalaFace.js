@@ -2,7 +2,7 @@ import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const BlueFace = () => {
+const MuyMalaFace = () => {
   const faceRef = useRef();
   const smileRef = useRef();
   const leftTearRef = useRef();
@@ -64,7 +64,7 @@ const AnimatedFace = () => (
   <Canvas>
     <ambientLight intensity={0.5} />
     <pointLight position={[10, 10, 10]} />
-    <BlueFace />
+    <MuyMalaFace />
   </Canvas>
 );
 
