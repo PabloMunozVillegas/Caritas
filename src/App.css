@@ -12,6 +12,7 @@
   justify-content: center;
   gap: 10px; /* Espacio entre las caras animadas */
   max-width: 100%; /* Ajusta al ancho máximo del contenedor */
+  flex-wrap: wrap; /* Envuelve las caras animadas cuando no hay suficiente espacio */
 }
 
 .animated-face {
@@ -47,4 +48,20 @@
 
 .calificacion-enviada {
   margin-top: 20px; /* Margen superior para el texto de calificación enviada */
+}
+
+/* Media queries para hacer el diseño responsive */
+
+@media (max-width: 768px) {
+  .animated-face {
+    width: 150px; /* Reduce el ancho de las caras animadas en pantallas más pequeñas */
+    height: 150px; /* Reduce la altura de las caras animadas en pantallas más pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .animated-face {
+    width: 120px; /* Reducción adicional del ancho en pantallas muy pequeñas */
+    height: 120px; /* Reducción adicional de la altura en pantallas muy pequeñas */
+  }
 }
