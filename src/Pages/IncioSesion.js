@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 
 function InicioSesion() {
     const [formData, setFormData] = useState({
-        nombre: '',
-        apellido: '',
+        correo: '',
+        contrasena: '',
     });
 
     const fields = [
-        { id: 'nombre', label: 'Nombre', type: 'text' },
-        { id: 'apellido', label: 'Apellido', type: 'text' },
+        { id: 'correo', label: 'correo', type: 'text' },
+        { id: 'contrasena', label: 'contrasena', type: 'text' },
     ];
 
     const handleChange = (e) => {
