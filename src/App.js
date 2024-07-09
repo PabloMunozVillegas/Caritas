@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import InicioSesion from './Pages/IncioSesion';
+
+import CarasSeleccionar from './Pages/CaraSeleccionar/CarasSeleccionar';
 
 function App() {
   return (
-    <InicioSesion/>
+    <div className="App">
+      <CarasSeleccionar />
+    </div>
   );
 }
 

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './CarasSeleccionar.css'; 
-import ExcelenteAnimatedFace from '../Faces3D/ExcelenteFace';
-import RegularAnimatedFace from '../Faces3D/RegularFace';
-import MuyBuenaAnimatedFace from '../Faces3D/MuyBuenaFace';
-import MalaAnimatedFace from '../Faces3D/MalaFace';
-import MuyMalaAnimatedFace from '../Faces3D/MuyMalaFace';
+import ExcelenteAnimatedFace from '../../Faces3D/ExcelenteFace';
+import RegularAnimatedFace from '../../Faces3D/RegularFace';
+import MuyBuenaAnimatedFace from '../../Faces3D/MuyBuenaFace';
+import MalaAnimatedFace from '../../Faces3D/MalaFace';
+import MuyMalaAnimatedFace from '../../Faces3D/MuyMalaFace';
 
-import CalificacionApiPostFunction from '../Functions/ApiPostFuncition';
+import CalificacionApiPostFunction from '../../Functions/ApiPostFuncition';
 
 function CarasSeleccionar() {
   const [calificacionEnviada, setCalificacionEnviada] = useState(null);
