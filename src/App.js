@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {Routes, Route } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import InicioSesion from './Pages';
-import CarasSeleccionar from './Pages/CaraSeleccionar'; 
+import InicioSesion from './Paginas';
+import CarasSeleccionar from './Paginas/Pagina-Cliente'; 
 import './App.css';
 
 function App() {

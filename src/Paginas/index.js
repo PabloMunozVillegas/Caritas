@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { APIFunctions } from '../Functions/ApiFuntions';
+import { APIFunctions } from '../Funciones/FuncionesApi';
 
 const InicioSesion = ({ setToken }) => {
   const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ const InicioSesion = ({ setToken }) => {
     setLoading(true);
   
     try {
-      const response = await APIFunctions.autenticacion.login(formData); // Llama correctamente la función de API
+      const response = await APIFunctions.autenticacion.login(formData);
       if (response && response.token) {
         localStorage.setItem('token', response.token);
         setToken(response.token);
