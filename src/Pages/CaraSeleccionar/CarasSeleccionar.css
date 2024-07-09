@@ -1,0 +1,71 @@
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden; /* Evita scroll horizontal */
+  }
+  
+  .animated-face-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Espacio entre las caras animadas */
+    max-width: 100%; /* Ajusta al ancho máximo del contenedor */
+    flex-wrap: wrap; /* Envuelve las caras animadas cuando no hay suficiente espacio */
+  }
+  
+  .animated-face {
+    cursor: pointer;
+    width: 250px; /* Ancho fijo para cada cara animada */
+    height: 250px; /* Altura fija para cada cara animada */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px; /* Borde redondeado para las caras animadas */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Sombra para resaltar */
+    font-size: 1.5rem; /* Tamaño de fuente para texto dentro de la cara animada */
+  }
+  
+  #cara5 {
+    order: 1; /* Coloca cara5 al inicio (izquierda) */
+  }
+  
+  #cara4 {
+    order: 2; /* Coloca cara4 después de cara5 */
+  }
+  
+  #cara3 {
+    order: 3; /* Coloca cara3 en el centro */
+  }
+  
+  #cara2 {
+    order: 4; /* Coloca cara2 antes de cara1 */
+  }
+  
+  #cara1 {
+    order: 5; /* Coloca cara1 al final (derecha) */
+  }
+  
+  .calificacion-enviada {
+    margin-top: 20px; /* Margen superior para el texto de calificación enviada */
+  }
+  
+  /* Media queries para hacer el diseño responsive */
+  
+  @media (max-width: 768px) {
+    .animated-face {
+      width: 200px; /* Reduce el ancho de las caras animadas en pantallas más pequeñas */
+      height: 200px; /* Reduce la altura de las caras animadas en pantallas más pequeñas */
+      font-size: 1.2rem; /* Reducción del tamaño de fuente en pantallas más pequeñas */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .animated-face {
+      width: 150px; /* Reducción adicional del ancho en pantallas muy pequeñas */
+      height: 150px; /* Reducción adicional de la altura en pantallas muy pequeñas */
+      font-size: 1rem; /* Tamaño de fuente más pequeño en pantallas muy pequeñas */
+    }
+  }
+  
