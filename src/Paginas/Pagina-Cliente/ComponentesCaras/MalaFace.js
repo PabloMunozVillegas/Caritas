@@ -13,12 +13,25 @@ const MalaFace = () => {
   const rightEyebrowRef = useRef();
   const bridgeRef = useRef(); // Agregado el ref para el puente entre los lentes
 
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true);
 
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
 
     if (isAnimating) {
+
+      // Animación de salto
+      faceRef.current.position.y = Math.abs(Math.sin(t * 2)) * 0.1;
+
+      // Animación de los lentes y el puente
+      const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
+      const liftAmount = liftCycle * 0.2;
+
+      leftLensRef.current.position.y = liftAmount;
+      rightLensRef.current.position.y = liftAmount;
+      bridgeRef.current.position.y = liftAmount;
+
+
       // Animación de parpadeo de los ojos
       const blinkCycle = Math.sin(t * 4) * 0.5 + 0.5;
       const eyeBlinkAmount = blinkCycle * 0.1;
@@ -37,17 +50,17 @@ const MalaFace = () => {
   });
 
   const handleClick = () => {
-    setIsAnimating(true);
+    setIsAnimating(false);
   };
 
-  const lightBlue = useMemo(() => new THREE.Color('#4FC3F7'), []);
+  const lightorange = useMemo(() => new THREE.Color('#F39C12'), []);
 
   return (
     <group ref={faceRef} onClick={handleClick} scale={[1.2, 1.2, 1.2]}>
       {/* Cara principal */}
       <mesh>
         <circleGeometry args={[1.5, 32]} />
-        <meshStandardMaterial color={lightBlue} />
+        <meshStandardMaterial color={lightorange} />
       </mesh>
 
       {/* Ojos */}
@@ -126,7 +139,7 @@ const MalaFace = () => {
 
 const MalaAnimatedFace = () => (
   <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-    <ambientLight intensity={0.5} />
+    <ambientLight intensity={1.8} />
     <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} />
     <pointLight position={[10, 10, 10]} />
     <MalaFace />

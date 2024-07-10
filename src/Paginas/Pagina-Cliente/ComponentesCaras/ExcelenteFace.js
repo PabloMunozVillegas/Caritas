@@ -12,7 +12,7 @@ const GreenFace = () => {
   const smileRef = useRef();
   const leftEyebrowRef = useRef();
   const rightEyebrowRef = useRef();
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true);
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
@@ -44,7 +44,7 @@ const GreenFace = () => {
   });
 
   const handleClick = () => {
-    setIsAnimating(true);
+    setIsAnimating(false);
   };
 
   const lightGreen = useMemo(() => new THREE.Color('#00C040'), []);
@@ -133,7 +133,7 @@ const GreenFace = () => {
 
 const AnimatedFace = () => (
   <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-    <ambientLight intensity={0.5} />
+    <ambientLight intensity={0.6} />
     <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} />
     <pointLight position={[10, 10, 10]} />
     <GreenFace />
