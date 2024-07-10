@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -11,43 +11,46 @@ const MalaFace = () => {
   const reverseSmileRef = useRef();
   const leftEyebrowRef = useRef();
   const rightEyebrowRef = useRef();
-  const bridgeRef = useRef(); // Agregado el ref para el puente entre los lentes
+  const bridgeRef = useRef();
 
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const t = state.clock.getElapsedTime();
 
-    if (isAnimating) {
-      // Animación de parpadeo de los ojos
-      const blinkCycle = Math.sin(t * 4) * 0.5 + 0.5;
-      const eyeBlinkAmount = blinkCycle * 0.1;
-      leftEyeRef.current.scale.y = 1 - eyeBlinkAmount;
-      rightEyeRef.current.scale.y = 1 - eyeBlinkAmount;
+    // Animación de salto
+    faceRef.current.position.y = Math.abs(Math.sin(t * 2)) * 0.1;
 
-      // Animación de la sonrisa al revés (mueca)
-      const reverseSmileCycle = Math.sin(t * 2);
-      reverseSmileRef.current.rotation.x = reverseSmileCycle * 0.4; // Ajusta el ángulo de rotación según el ciclo sinusoidal
+    // Animación de los lentes y el puente
+    const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
+    const liftAmount = liftCycle * 0.2;
 
-      // Animación de cejas inclinadas hacia el centro
-      const eyebrowIncline = Math.abs(reverseSmileCycle) * 40;
-      leftEyebrowRef.current.rotation.z = THREE.MathUtils.degToRad(eyebrowIncline);
-      rightEyebrowRef.current.rotation.z = THREE.MathUtils.degToRad(-eyebrowIncline);
-    }
+    leftLensRef.current.position.y = liftAmount;
+    rightLensRef.current.position.y = liftAmount;
+    bridgeRef.current.position.y = liftAmount;
+
+    // Animación de parpadeo de los ojos
+    const blinkCycle = Math.sin(t * 4) * 0.5 + 0.5;
+    const eyeBlinkAmount = blinkCycle * 0.1;
+    leftEyeRef.current.scale.y = 1 - eyeBlinkAmount;
+    rightEyeRef.current.scale.y = 1 - eyeBlinkAmount;
+
+    // Animación de la sonrisa al revés (mueca)
+    const reverseSmileCycle = Math.sin(t * 2);
+    reverseSmileRef.current.rotation.x = reverseSmileCycle * 0.4;
+
+    // Animación de cejas inclinadas hacia el centro
+    const eyebrowIncline = Math.abs(reverseSmileCycle) * 40;
+    leftEyebrowRef.current.rotation.z = THREE.MathUtils.degToRad(eyebrowIncline);
+    rightEyebrowRef.current.rotation.z = THREE.MathUtils.degToRad(-eyebrowIncline);
   });
 
-  const handleClick = () => {
-    setIsAnimating(true);
-  };
-
-  const lightBlue = useMemo(() => new THREE.Color('#4FC3F7'), []);
+  const lightorange = useMemo(() => new THREE.Color('#F39C12'), []);
 
   return (
-    <group ref={faceRef} onClick={handleClick} scale={[1.2, 1.2, 1.2]}>
+    <group ref={faceRef} scale={[1.2, 1.2, 1.2]}>
       {/* Cara principal */}
       <mesh>
         <circleGeometry args={[1.5, 32]} />
-        <meshStandardMaterial color={lightBlue} />
+        <meshStandardMaterial color={lightorange} />
       </mesh>
 
       {/* Ojos */}
@@ -64,7 +67,7 @@ const MalaFace = () => {
         </mesh>
 
         {/* Cejas */}
-        <group position={[0, 0,1, 0.2]}>
+        <group position={[0, 0.1, 0.2]}>
           {/* Ceja izquierda */}
           <mesh ref={leftEyebrowRef} position={[-0.35, 0.25, 0.2]} rotation={[0, 0, 0]}>
             <planeGeometry args={[0.25, 0.05]} />
@@ -126,7 +129,7 @@ const MalaFace = () => {
 
 const MalaAnimatedFace = () => (
   <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-    <ambientLight intensity={0.5} />
+    <ambientLight intensity={1.8} />
     <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} />
     <pointLight position={[10, 10, 10]} />
     <MalaFace />

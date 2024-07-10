@@ -1,69 +1,92 @@
-//Importamos las librerias necesarias
 import React, { useState } from 'react';
-//Importamos el css de la pagina
-import './index.css'; 
-//Importamos los componentes de las caras animadas
+import './index.css';
 import ExcelenteAnimatedFace from './ComponentesCaras/ExcelenteFace';
 import RegularAnimatedFace from './ComponentesCaras/RegularFace';
 import MuyBuenaAnimatedFace from './ComponentesCaras/MuyBuenaFace';
 import MalaAnimatedFace from './ComponentesCaras/MalaFace';
 import MuyMalaAnimatedFace from './ComponentesCaras/MuyMalaFace';
+import { APIFunctions } from '../../Funciones/FuncionesApi';
 
-//Importamos las funciones de la API
-import { APIFunctions } from '../../Funciones/FuncionesApi'; 
-
-//Creamos una funcion que engloba la paginas y sus funciones
 function CarasSeleccionar() {
-    //Creamos un estado donde almacenaremos el resultado de la calificacion enviada
-    const [calificacionEnviada, setCalificacionEnviada] = useState(null);
+  const [calificacionEnviada, setCalificacionEnviada] = useState(null);
+  const [faceSelected, setFaceSelected] = useState(null);
 
-    //Creamos una funcion que se encarga de enviar la calificacion al servidor
-    const handleClick = async (calificacion) => {
-        //Hacemos un try para ver si la peticion se ha podido hacer
-        try {
-            //Obtenemos el token de localStorage
-            const token = localStorage.getItem('token'); 
-            //Hacemos un console.log para ver el resultado de la peticion por buenas practicas comentar
-            //console.log(calificacion);
-            //Hacemos un await para esperar a que la peticion se haga pasando el token como segundo argumento y los datos
-            await APIFunctions.calificacion.create({ nombre: calificacion, sucursal: 'string' }, token); 
-            //Hacemos un set para actualizar el estado de la calificacion enviada
-            setCalificacionEnviada(calificacion); 
-            //Hacemos catch para ver si hay algun error
-        } catch (error) {
-            //En caso de que haya un error, lanzamos un error por buenas practicas comentar
-            //console.error('Error al enviar la calificación a la API:', error);
-        }
-    };
+  const handleClick = async (calificacion) => {
+    try {
+      const token = localStorage.getItem('token');
+      await APIFunctions.calificacion.create({ nombre: calificacion, sucursal: 'string' }, token);
+      setFaceSelected(calificacion);
+      setCalificacionEnviada(calificacion);
 
-    return (
-        //Devolvemos el componente
-        <div className="app-container">
-            <div className="animated-face-container">
-                <div className="animated-face" id="cara5" onClick={/*Envaiamos por el click del boton el valor de la cara5*/() => handleClick('Excelente')}>
-                    <ExcelenteAnimatedFace />
-                </div>
-                <div className="animated-face" id="cara4" onClick={/*Envaiamos por el click del boton el valor de la cara4*/() => handleClick('Bueno')}>
-                    <MuyBuenaAnimatedFace />
-                </div>
-                <div className="animated-face" id="cara3" onClick={/*Envaiamos por el click del boton el valor de la cara3*/() => handleClick('Regular')}>
-                    <RegularAnimatedFace />
-                </div>
-                <div className="animated-face" id="cara2" onClick={/*Envaiamos por el click del boton el valor de la cara2*/() => handleClick('Mala')}>
-                    <MalaAnimatedFace />
-                </div>
-                <div className="animated-face" id="cara1" onClick={/*Envaiamos por el click del boton el valor de la cara1*/() => handleClick('MuyMala')}>
-                    <MuyMalaAnimatedFace />
-                </div>
+      setTimeout(() => {
+        setFaceSelected(null); // Quitar la cara seleccionada después de 3 segundos
+        setCalificacionEnviada(null); // Mostrar todas las caras después de 3 segundos
+      }, 3000);
+    } catch (error) {
+      console.error('Error al enviar la calificación a la API:', error);
+    }
+  };
+
+  const handleContainerClick = (calificacion) => {
+    handleClick(calificacion);
+  };
+
+  const renderFace = (calificacion) => {
+    switch (calificacion) {
+      case 'Excelente':
+        return { face: <ExcelenteAnimatedFace />, message: '¡Excelente! Gracias por tu calificación.' };
+      case 'Bueno':
+        return { face: <MuyBuenaAnimatedFace />, message: '¡Muy bueno! Gracias por tu calificación.' };
+      case 'Regular':
+        return { face: <RegularAnimatedFace />, message: 'Regular, trabajaremos para mejorar.' };
+      case 'Mala':
+        return { face: <MalaAnimatedFace />, message: 'Lo sentimos, mejoraremos para ti.' };
+      case 'MuyMala':
+        return { face: <MuyMalaAnimatedFace />, message: 'Lamentamos tu experiencia, mejoraremos.' };
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="app-container">
+      <div className="animated-face-container">
+        {!faceSelected && (
+          <>
+            <div className="animated-face" onClick={() => handleContainerClick('Excelente')}>
+              {renderFace('Excelente').face}
             </div>
+            <div className="animated-face" onClick={() => handleContainerClick('Bueno')}>
+              {renderFace('Bueno').face}
+            </div>
+            <div className="animated-face" onClick={() => handleContainerClick('Regular')}>
+              {renderFace('Regular').face}
+            </div>
+            <div className="animated-face" onClick={() => handleContainerClick('Mala')}>
+              {renderFace('Mala').face}
+            </div>
+            <div className="animated-face" onClick={() => handleContainerClick('MuyMala')}>
+              {renderFace('MuyMala').face}
+            </div>
+          </>
+        )}
 
-            {/*Devolvemos el componente si la calificacion enviada es no nula para la nueva version esto deberia solo renderizar
-            la cara seleccionada con el fondo que se buscara hacer */}
-            {calificacionEnviada && (
-                <p className="calificacion-enviada">Calificación enviada: {calificacionEnviada}</p>
-            )}
+        {faceSelected && (
+          <div className={`selected-face ${faceSelected}`}>
+            <div className="animated-face">
+              {renderFace(faceSelected).face}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {calificacionEnviada && (
+        <div className="calificacion-enviada">
+          <p>{renderFace(calificacionEnviada).message}</p>
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
 export default CarasSeleccionar;
