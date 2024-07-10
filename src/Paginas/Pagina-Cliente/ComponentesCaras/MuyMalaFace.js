@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -12,44 +12,35 @@ const MuyMalaFace = () => {
   const rightLensRef = useRef();
   const bridgeRef = useRef();
 
-  const [isAnimating, setIsAnimating] = useState(true);
-
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const t = state.clock.getElapsedTime();
     
-    if (isAnimating) {
-      // Animación de salto
-      faceRef.current.position.y = Math.abs(Math.sin(t * 2)) * 0.1;
+    // Animación de salto
+    faceRef.current.position.y = Math.abs(Math.sin(t * 2)) * 0.1;
 
-      // Animación de los lentes y el puente
-      const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
-      const liftAmount = liftCycle * 0.2;
+    // Animación de los lentes y el puente
+    const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
+    const liftAmount = liftCycle * 0.2;
 
-      leftLensRef.current.position.y = liftAmount;
-      rightLensRef.current.position.y = liftAmount;
-      bridgeRef.current.position.y = liftAmount;
+    leftLensRef.current.position.y = liftAmount;
+    rightLensRef.current.position.y = liftAmount;
+    bridgeRef.current.position.y = liftAmount;
 
+    // Animación de cejas enojadas
+    const eyebrowAngle = Math.sin(t * 4) * 0.3 + 0.4; // Oscila entre -0.4 y 0 radianes
+    leftEyebrowRef.current.rotation.z = -eyebrowAngle;
+    rightEyebrowRef.current.rotation.z = eyebrowAngle;
 
-      // Animación de cejas enojadas
-      const eyebrowAngle = Math.sin(t * 4) * 0.3 + 0.4; // Oscila entre -0.4 y 0 radianes
-      leftEyebrowRef.current.rotation.z = -eyebrowAngle;
-      rightEyebrowRef.current.rotation.z = eyebrowAngle;
-
-      // Animación sutil de los ojos
-      const eyeSquint = Math.sin(t * 4) * 0.1 + 0.9; // Oscila entre 0.8 y 1
-      leftEyeRef.current.scale.y = eyeSquint;
-      rightEyeRef.current.scale.y = eyeSquint;
-    }
+    // Animación sutil de los ojos
+    const eyeSquint = Math.sin(t * 4) * 0.1 + 0.9; // Oscila entre 0.8 y 1
+    leftEyeRef.current.scale.y = eyeSquint;
+    rightEyeRef.current.scale.y = eyeSquint;
   });
-
-  const handleClick = () => {
-    setIsAnimating(false);
-  };
 
   const lightred = useMemo(() => new THREE.Color('#DE1103'), []);
 
   return (
-    <group ref={faceRef} onClick={handleClick} scale={[1.2, 1.2, 1.2]}>
+    <group ref={faceRef} scale={[1.2, 1.2, 1.2]}>
       {/* Cara principal */}
       <mesh>
         <circleGeometry args={[1.5, 32]} />

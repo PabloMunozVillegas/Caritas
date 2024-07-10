@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -12,50 +12,43 @@ const GreenFace = () => {
   const smileRef = useRef();
   const leftEyebrowRef = useRef();
   const rightEyebrowRef = useRef();
-  const [isAnimating, setIsAnimating] = useState(true);
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
 
-    if (isAnimating) {
-      // Animación sutil de subida y bajada
-      faceRef.current.position.y = Math.sin(t * 2) * 0.1;
+    // Animación sutil de subida y bajada
+    faceRef.current.position.y = Math.sin(t * 2) * 0.1;
 
-      // Animación de los lentes y el puente
-      const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
-      const liftAmount = liftCycle * 0.2;
+    // Animación de los lentes y el puente
+    const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
+    const liftAmount = liftCycle * 0.2;
 
-      leftLensRef.current.position.y = liftAmount;
-      rightLensRef.current.position.y = liftAmount;
-      bridgeRef.current.position.y = liftAmount;
+    leftLensRef.current.position.y = liftAmount;
+    rightLensRef.current.position.y = liftAmount;
+    bridgeRef.current.position.y = liftAmount;
 
-      // Animación de parpadeo de ojos
-      const blinkSpeed = t * 2;
-      leftEyeRef.current.scale.y = Math.max(Math.cos(blinkSpeed), 0.1);
-      rightEyeRef.current.scale.y = Math.max(Math.cos(blinkSpeed), 0.1);
+    // Animación de parpadeo de ojos
+    const blinkSpeed = t * 2;
+    leftEyeRef.current.scale.y = Math.max(Math.cos(blinkSpeed), 0.1);
+    rightEyeRef.current.scale.y = Math.max(Math.cos(blinkSpeed), 0.1);
 
-      // Animación de la sonrisa que se cierra y vuelve a sonreír
-      const smileSpeed = t * 1;
-      const smileScale = Math.abs(Math.sin(smileSpeed)) * 0.5 + 0.5;
-      smileRef.current.scale.set(1, smileScale, 1);
+    // Animación de la sonrisa que se cierra y vuelve a sonreír
+    const smileSpeed = t * 1;
+    const smileScale = Math.abs(Math.sin(smileSpeed)) * 0.5 + 0.5;
+    smileRef.current.scale.set(1, smileScale, 1);
 
-      // Animación de cejas
-      const eyebrowLift = Math.sin(t * 2) * 0.05 + 0.1;
-      leftEyebrowRef.current.position.y = eyebrowLift + 0.55;
-      rightEyebrowRef.current.position.y = eyebrowLift + 0.55;
-      leftEyebrowRef.current.position.x = -0.35 + Math.sin(t * 2) * 0.05;
-      rightEyebrowRef.current.position.x = 0.35 - Math.sin(t * 2) * 0.05;
-    }
+    // Animación de cejas
+    const eyebrowLift = Math.sin(t * 2) * 0.05 + 0.1;
+    leftEyebrowRef.current.position.y = eyebrowLift + 0.55;
+    rightEyebrowRef.current.position.y = eyebrowLift + 0.55;
+    leftEyebrowRef.current.position.x = -0.35 + Math.sin(t * 2) * 0.05;
+    rightEyebrowRef.current.position.x = 0.35 - Math.sin(t * 2) * 0.05;
   });
-
-  const handleClick = () => {
-    setIsAnimating(false);
-  };
 
   const lightGreen = useMemo(() => new THREE.Color('#2ECC71'), []);
 
   return (
-    <group ref={faceRef} onClick={handleClick} scale={[1.2, 1.2, 1.2]}>
+    <group ref={faceRef} scale={[1.2, 1.2, 1.2]}>
       {/* Cara principal */}
       <mesh>
         <circleGeometry args={[1.5, 32]} />
@@ -136,7 +129,7 @@ const GreenFace = () => {
   );
 };
 
-const AnimatedFace = () => (
+const MuyBuenaAnimatedFace = () => (
   <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
     <ambientLight intensity={1} />
     <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} />
@@ -145,4 +138,4 @@ const AnimatedFace = () => (
   </Canvas>
 );
 
-export default AnimatedFace;
+export default MuyBuenaAnimatedFace;

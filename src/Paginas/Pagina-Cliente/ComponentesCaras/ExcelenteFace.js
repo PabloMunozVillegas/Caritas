@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -12,45 +12,38 @@ const GreenFace = () => {
   const smileRef = useRef();
   const leftEyebrowRef = useRef();
   const rightEyebrowRef = useRef();
-  const [isAnimating, setIsAnimating] = useState(true);
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
 
-    if (isAnimating) {
-      // Animación de salto
-      faceRef.current.position.y = Math.abs(Math.sin(t * 2)) * 0.1;
+    // Animación de salto
+    faceRef.current.position.y = Math.abs(Math.sin(t * 2)) * 0.1;
 
-      // Animación de los lentes y el puente
-      const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
-      const liftAmount = liftCycle * 0.2;
+    // Animación de los lentes y el puente
+    const liftCycle = Math.sin(t * 2) * 0.5 + 0.5;
+    const liftAmount = liftCycle * 0.2;
 
-      leftLensRef.current.position.y = liftAmount;
-      rightLensRef.current.position.y = liftAmount;
-      bridgeRef.current.position.y = liftAmount;
+    leftLensRef.current.position.y = liftAmount;
+    rightLensRef.current.position.y = liftAmount;
+    bridgeRef.current.position.y = liftAmount;
 
-      // Animación de guiño y sonrisa
-      const winkSpeed = t * 5;
-      leftEyeRef.current.scale.y = Math.max(Math.sin(winkSpeed), 0.1);
-      smileRef.current.rotation.z = Math.sin(winkSpeed) * 0.2;
+    // Animación de guiño y sonrisa
+    const winkSpeed = t * 5;
+    leftEyeRef.current.scale.y = Math.max(Math.sin(winkSpeed), 0.1);
+    smileRef.current.rotation.z = Math.sin(winkSpeed) * 0.2;
 
-      // Animación de cejas
-      const eyebrowLift = Math.sin(t * 2) * 0.05 + 0.1;
-      leftEyebrowRef.current.position.y = eyebrowLift + 0.55;
-      rightEyebrowRef.current.position.y = eyebrowLift + 0.55;
-      leftEyebrowRef.current.position.x = -0.35 + Math.sin(t * 2) * 0.05;
-      rightEyebrowRef.current.position.x = 0.35 - Math.sin(t * 2) * 0.05;
-    }
+    // Animación de cejas
+    const eyebrowLift = Math.sin(t * 2) * 0.05 + 0.1;
+    leftEyebrowRef.current.position.y = eyebrowLift + 0.55;
+    rightEyebrowRef.current.position.y = eyebrowLift + 0.55;
+    leftEyebrowRef.current.position.x = -0.35 + Math.sin(t * 2) * 0.05;
+    rightEyebrowRef.current.position.x = 0.35 - Math.sin(t * 2) * 0.05;
   });
-
-  const handleClick = () => {
-    setIsAnimating(false);
-  };
 
   const lightGreen = useMemo(() => new THREE.Color('#00C040'), []);
 
   return (
-    <group ref={faceRef} onClick={handleClick} scale={[1.2, 1.2, 1.2]}>
+    <group ref={faceRef} scale={[1.2, 1.2, 1.2]}>
       {/* Cara principal */}
       <mesh>
         <circleGeometry args={[1.5, 32]} />
