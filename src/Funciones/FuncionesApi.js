@@ -1,6 +1,6 @@
 import axios from 'axios';
 //Creamos una constante con la URL del servidor
-const API_BASE_URL = 'https://0fwwkqtc-5000.brs.devtunnels.ms';
+const API_BASE_URL = 'http://localhost:5000';
 
 //Creamos una funcion en donde asincronamente debemos pedir el metodo, la url, los datos y el token
 //Donde los datos y el token son nulos ya que se envian en el body de la peticion

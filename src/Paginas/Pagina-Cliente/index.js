@@ -1,88 +1,83 @@
-import React, { useState } from 'react';
-import './index.css';
-import ExcelenteAnimatedFace from './ComponentesCaras/ExcelenteFace';
-import RegularAnimatedFace from './ComponentesCaras/RegularFace';
-import MuyBuenaAnimatedFace from './ComponentesCaras/MuyBuenaFace';
-import MalaAnimatedFace from './ComponentesCaras/MalaFace';
-import MuyMalaAnimatedFace from './ComponentesCaras/MuyMalaFace';
-import { APIFunctions } from '../../Funciones/FuncionesApi';
+import React, { useState, useEffect } from 'react';
+import useApiFunctions from '../../Hoook/ApiFunc';
 
 function CarasSeleccionar() {
   const [calificacionEnviada, setCalificacionEnviada] = useState(null);
   const [faceSelected, setFaceSelected] = useState(null);
+  const { crearTodo } = useApiFunctions();
 
   const handleClick = async (calificacion) => {
-    try {
-      const token = localStorage.getItem('token');
-      await APIFunctions.calificacion.create({ nombre: calificacion, sucursal: 'string' }, token);
-      setFaceSelected(calificacion);
-      setCalificacionEnviada(calificacion);
+    const formulario = {
+      nombre: calificacion
+    };
+    const response = await crearTodo('calificacion', null, formulario);
+    console.log('Respuesta', response);
+    setCalificacionEnviada(calificacion);
+    setFaceSelected(calificacion);
 
-      setTimeout(() => {
-        setFaceSelected(null); // Quitar la cara seleccionada después de 3 segundos
-        setCalificacionEnviada(null); // Mostrar todas las caras después de 3 segundos
-      }, 3000);
-    } catch (error) {
-      console.error('Error al enviar la calificación a la API:', error);
-    }
+    // Resetear la selección después de 3 segundos
+    setTimeout(() => {
+      setFaceSelected(null);
+      setCalificacionEnviada(null);
+    }, 3000);
   };
 
-  const handleContainerClick = (calificacion) => {
-    handleClick(calificacion);
-  };
-
-  const renderFace = (calificacion) => {
-    switch (calificacion) {
-      case 'Excelente':
-        return { face: <ExcelenteAnimatedFace />, message: '¡Excelente! Gracias por tu calificación.' };
-      case 'Bueno':
-        return { face: <MuyBuenaAnimatedFace />, message: '¡Muy bueno! Gracias por tu calificación.' };
-      case 'Regular':
-        return { face: <RegularAnimatedFace />, message: 'Regular, trabajaremos para mejorar.' };
-      case 'Mala':
-        return { face: <MalaAnimatedFace />, message: 'Lo sentimos, mejoraremos para ti.' };
-      case 'MuyMala':
-        return { face: <MuyMalaAnimatedFace />, message: 'Lamentamos tu experiencia, mejoraremos.' };
-      default:
-        return null;
-    }
-  };
+  const faces = [
+    { name: 'Excelente', src: '/Emogi/MuyBueno.jpg', message: '¡Excelente! Gracias por tu calificación.' },
+    { name: 'Bueno', src: '/Emogi/Bueno.jpg', message: '¡Muy bueno! Gracias por tu calificación.' },
+    { name: 'Regular', src: '/Emogi/Aceptable.jpg', message: 'Regular, trabajaremos para mejorar.' },
+    { name: 'Mala', src: '/Emogi/Deficiente.jpg', message: 'Lo sentimos, mejoraremos para ti.' },
+    { name: 'MuyMala', src: '/Emogi/Malo.jpg', message: 'Lamentamos tu experiencia, mejoraremos.' },
+  ];
 
   return (
-    <div className="app-container">
-      <div className="animated-face-container">
-        {!faceSelected && (
-          <>
-            <div className="animated-face" onClick={() => handleContainerClick('Excelente')}>
-              {renderFace('Excelente').face}
+    <div className="container mx-auto px-4 py-8 h-screen flex flex-col justify-center items-center">
+      {!faceSelected ? (
+        <div className="grid grid-cols-3 gap-4 mb-4 w-full max-w-4xl">
+          {faces.slice(0, 3).map((face) => (
+            <div 
+              key={face.name} 
+              className="flex justify-center"
+              onClick={() => handleClick(face.name)}
+            >
+              <img 
+                src={face.src} 
+                alt={face.name} 
+                className="w-full h-auto object-contain cursor-pointer transition-transform hover:scale-105"
+                style={{maxWidth: '213px', maxHeight: '380px'}}
+              />
             </div>
-            <div className="animated-face" onClick={() => handleContainerClick('Bueno')}>
-              {renderFace('Bueno').face}
-            </div>
-            <div className="animated-face" onClick={() => handleContainerClick('Regular')}>
-              {renderFace('Regular').face}
-            </div>
-            <div className="animated-face" onClick={() => handleContainerClick('Mala')}>
-              {renderFace('Mala').face}
-            </div>
-            <div className="animated-face" onClick={() => handleContainerClick('MuyMala')}>
-              {renderFace('MuyMala').face}
-            </div>
-          </>
-        )}
-
-        {faceSelected && (
-          <div className={`selected-face ${faceSelected}`}>
-            <div className="animated-face">
-              {renderFace(faceSelected).face}
-            </div>
+          ))}
+          <div className="col-span-3 flex justify-center space-x-4">
+            {faces.slice(3).map((face) => (
+              <div 
+                key={face.name} 
+                className="flex justify-center"
+                onClick={() => handleClick(face.name)}
+              >
+                <img 
+                  src={face.src} 
+                  alt={face.name} 
+                  className="w-full h-auto object-contain cursor-pointer transition-transform hover:scale-105"
+                  style={{maxWidth: '213px', maxHeight: '380px'}}
+                />
+              </div>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center w-full h-full">
+          <img 
+            src={faces.find(f => f.name === faceSelected).src} 
+            alt={faceSelected} 
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+      )}
 
       {calificacionEnviada && (
-        <div className="calificacion-enviada">
-          <p>{renderFace(calificacionEnviada).message}</p>
+        <div className="absolute bottom-0 left-0 right-0 text-center mt-4 p-4 ">
+          <p>{faces.find(f => f.name === calificacionEnviada).message}</p>
         </div>
       )}
     </div>
