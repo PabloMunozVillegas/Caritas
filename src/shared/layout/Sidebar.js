@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaChevronDown, FaChevronUp, FaTimes, FaBars } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
+import { MdBusiness, MdStore, MdPerson, MdStar, MdEmail } from 'react-icons/md';
 
-const MenuItem = ({ label, onClick, children }) => {
+const MenuItem = ({ label, onClick, children, icon }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleToggle = () => {
@@ -14,7 +15,10 @@ const MenuItem = ({ label, onClick, children }) => {
                 onClick={children ? handleToggle : onClick}
                 className="flex items-center justify-between w-full text-left text-gray-300 hover:text-white transition-colors duration-300 py-2 px-4 rounded-lg bg-gray-700 hover:bg-gray-600"
             >
-                {label}
+                <div className="flex items-center">
+                    {icon && <span className="mr-2">{icon}</span>}
+                    {label}
+                </div>
                 {children && (
                     isOpen ? <FaChevronUp className="w-4 h-4" /> : <FaChevronDown className="w-4 h-4" />
                 )}
@@ -65,22 +69,39 @@ const Sidebar = ({ setActiveComponent, isSidebarOpen, toggleSidebar }) => {
                     isSidebarOpen ? 'rotate-0' : 'rotate-180'
                 }`}
             >
-                <FaTimes className={`transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'rotate-0' : 'rotate-45'}`} />
+                <FaTimes className="transform transition-transform duration-300 ease-in-out" />
             </button>
             <h2 className="text-xl font-bold mb-6 border-b border-gray-700 pb-2">Menu</h2>
             
             <div className="mb-6">
-                <MenuItem label="Trafico" onClick={() => setActiveComponent('Trafico')}/>
+                <MenuItem label="Empresa" icon={<MdBusiness className="h-5 w-5" />}>
+                    <MenuItem label="Crear Empresa" onClick={() => setActiveComponent('CrearEmpresa')} />
+                    <MenuItem label="Listar Empresas" onClick={() => setActiveComponent('ListarEmpresas')} />
+                    <MenuItem label="Estadísticas Empresa" onClick={() => setActiveComponent('EstadisticasEmpresa')} />
+                </MenuItem>
             </div>
             <div className="mb-6">
-                <MenuItem label="Gestion">
-                    <MenuItem label="Indicadores por Sucursal" onClick={() => setActiveComponent('IndicadoresPorSucursal')} />
-                    <MenuItem label="Indicadores por Fecha" onClick={() => setActiveComponent('IndicadoresPorFecha')}/>
-                    <MenuItem label="Rendimiento Asesores de Venta" onClick={() => setActiveComponent('RendimientoAsesores')}/>
+                <MenuItem label="Sucursal" icon={<MdStore className="h-5 w-5" />}>
+                    <MenuItem label="Crear Sucursal" onClick={() => setActiveComponent('CrearSucursal')} />
+                    <MenuItem label="Listar Sucursal" onClick={() => setActiveComponent('ListarSucursal')} />
+                    <MenuItem label="Estadísticas Sucursal" onClick={() => setActiveComponent('EstadisticasSucursal')} />
                 </MenuItem>
             </div>
             <div className="mb-6"> 
-                <MenuItem label="Comparativos" onClick={() => setActiveComponent('Comparaciones')} />
+                <MenuItem label="Usuario" icon={<MdPerson className="h-5 w-5" />}>
+                    <MenuItem label="Crear Usuario" onClick={() => setActiveComponent('CrearUsuarios')} />
+                    <MenuItem label="Listar Usuario" onClick={() => setActiveComponent('ListarUsuarios')} />
+                </MenuItem>
+            </div>
+            <div className="mb-6"> 
+                <MenuItem label="Calificaciones" icon={<MdStar className="h-5 w-5" />}>
+                    <MenuItem label="Listar Calificaciones" onClick={() => setActiveComponent('ListarReacciones')} />
+                </MenuItem>
+            </div>
+            <div className="mb-6"> 
+                <MenuItem label="Correo" icon={<MdEmail className="h-5 w-5" />}>
+                    <MenuItem label="Crear Correo" onClick={() => setActiveComponent('CrearCorreo')} />
+                </MenuItem>
             </div>
         </div>
     );

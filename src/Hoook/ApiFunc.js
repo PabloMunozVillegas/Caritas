@@ -2,15 +2,23 @@ import axios from 'axios';
 import useToken from '../useToken'; 
 
 const useApiFunctions = () => {;
-    const url = 'https://0fwwkqtc-5000.brs.devtunnels.ms/api';
+    const url = 'http://localhost:5000/api';
     const { token} = useToken();
     const Enlaces = {
         EnlacesGet: {
-            
+            listarEmpresa: url + '/empresa/listar',
+            listarSucursal: url + '/sucursal',
+            enviarEmail: url + '/calificacion/email',
         },
         EnlacesPost: {
             inicioSesion: url + '/autenticacion',
-            calificacion: url + '/calificacion'
+            calificacion: url + '/calificacion',
+            crearEmpresa: url + '/empresa/create',
+            crearSucursal: url + '/sucursal/create',
+            crearUsuario: url + '/user/create',
+            obtenerCalificaicones: url + '/calificacion/listar',
+            crearEmail: url + '/correos/create/email',
+            crearCongfiguracion: url + '/correos/create/configuracion',
         },
         EnlacesPatch: {
             // Define your PATCH endpoints here
@@ -38,6 +46,7 @@ const useApiFunctions = () => {;
             throw error; 
         }
     };
+
 
     const crearTodo = async (endpoint, urlExtra, data) => {
         const extraUrl = urlExtra

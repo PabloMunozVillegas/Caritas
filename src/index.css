@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'Now';
+    src: url('/public/Tipografia/Now//Now-Light.otf') format('opentype');
+  }
+  
+  @font-face {
+    font-family: 'Now-Bold';
+    src: url('/public/Tipografia/Now//Now-Medium.otf') format('opentype');
+  }
+  
+  @font-face {
+    font-family: 'Now-Thin';
+    src: url('/public/Tipografia/Now//Now-Thin.otf') format('opentype');
+  }
+  
