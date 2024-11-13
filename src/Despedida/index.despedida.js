@@ -1,13 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Si estás usando react-router-dom para la navegación
+import { useNavigate } from 'react-router-dom';
+import useScreenSize from "../shared/hooks/useScreenSize";
 
 export const Despedida = () => {
     const [estado, setEstado] = useState('');
     const navigate = useNavigate();
     const [inactive, setInactive] = useState(false);
+    const { deviceType, width, height } = useScreenSize();
+
+    const styles = {
+        mobile: {
+            container: "flex flex-col items-center justify-between min-h-screen relative bg-white overflow-hidden",
+            title: "absolute font-now top-[25%] left-1/2 -translate-x-1/2 text-gray-500 text-[13vw] leading-[1em] tracking-[0.2em] w-full text-center px-4",
+            imageContainer: "absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[65vw] max-h-[25vh]",
+            image: "w-[85vw] max-h-[35vh] object-contain",
+            button: "absolute font-now top-[68%] left-1/2 -translate-x-1/2 text-gray-500 border-2 border-gray-500 text-[6vw] tracking-[0.1em] px-6 py-3 w-[80vw] text-center hover:bg-gray-500 hover:text-white transition-colors duration-300"
+        },
+        tablet: {
+            container: "flex flex-col items-center justify-between min-h-screen relative bg-white overflow-hidden",
+            title: "absolute font-now top-[20%] left-1/2 -translate-x-1/2 text-gray-500 text-[13vw] leading-[1em] tracking-[0.2em] w-full text-center px-6",
+            imageContainer: "absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] max-h-[25vh]",
+            image: "w-[75vw] max-h-[40vh] object-contain",
+            button: "absolute font-now top-[70%] left-1/2 -translate-x-1/2 text-gray-500 border-4 border-gray-500 text-[6vw] tracking-[0.15em] px-8 py-4 w-[70vw] text-center hover:bg-gray-500 hover:text-white transition-colors duration-300"
+        },
+        desktop: {
+            container: "flex flex-col items-center justify-between min-h-screen relative bg-white overflow-hidden",
+            title: "absolute font-now top-[10%] left-1/2 -translate-x-1/2 text-gray-500 text-[9vw] leading-[1em] tracking-[0.2em] w-full text-center px-8",
+            imageContainer: "absolute top-[53%] left-1/2 -translate-x-1/2 -translate-y-1/2",
+            image: "w-[50vw] h-[45vh] object-contain",
+            button: "absolute font-now top-[80%] left-1/2 -translate-x-1/2 text-gray-500 border-4 border-gray-500 text-[4vw] tracking-[0.1em] px-8 py-3 w-[45vw] text-center hover:bg-gray-500 hover:text-white transition-colors duration-300"
+        }
+    };
+
+    const deviceStyles = styles[deviceType];
 
     useEffect(() => {
-        // Definir ruta según el pathname
         switch (window.location.pathname) {
             case '/clientes/despedida/muybuena':
                 setEstado('Muy Buena');
@@ -29,23 +56,20 @@ export const Despedida = () => {
         }
     }, []);
 
-    // useEffect para detectar inactividad
     useEffect(() => {
         let timeout;
         const handleActivity = () => {
-            clearTimeout(timeout); // Resetea el timeout si hay actividad
+            clearTimeout(timeout);
             timeout = setTimeout(() => {
                 setInactive(true);
-                navigate('/clientes/salida'); // Redirigir a /lista si no hay actividad
-            }, 3000); // 10 segundos de inactividad
+                navigate('/clientes/salida');
+            }, 300000);
         };
 
-        // Escuchar eventos de actividad
         window.addEventListener('mousemove', handleActivity);
         window.addEventListener('keydown', handleActivity);
         window.addEventListener('touchstart', handleActivity);
 
-        // Limpieza al desmontar el componente
         return () => {
             window.removeEventListener('mousemove', handleActivity);
             window.removeEventListener('keydown', handleActivity);
@@ -54,58 +78,67 @@ export const Despedida = () => {
         };
     }, [navigate]);
 
+    const getTitleText = () => {
+        const titles = {
+            'Muy Buena': 'MUY BUENO',
+            'Buena': 'BUENO',
+            'Regular': 'ACEPTABLE',
+            'Mala': 'DEFICIENTE',
+            'Muy Mala': 'MALO'
+        };
+        return titles[estado] || 'Cargando...';
+    };
+
     const renderFace = () => {
         if (estado === '') {
             return <div>Cargando...</div>;
-        } else if (estado === 'Muy Buena') {
-            return <img className='w-[620px] h-[460px]' src="/gifsEmogis/Excelente.gif" alt="Muy Buena" />;
-        } else if (estado === 'Buena') {
-            return <img className='w-[620px] h-[460px]' src="/gifsEmogis/Buena.gif" alt="Buena" />;
-        } else if (estado === 'Regular') {
-            return <img className='w-[620px] h-[460px]' src="/gifsEmogis/Regular.gif" alt="Regular" />;
-        } else if (estado === 'Mala') {
-            return <img className='w-[620px] h-[460px]' src="/gifsEmogis/Mala.gif" alt="Mala" />;
-        } else if (estado === 'Muy Mala') {
-            return <img className='w-[620px] h-[460px]' src="/gifsEmogis/MuyMala.gif" alt="Muy Mala" />;
         }
+        
+        const gifs = {
+            'Muy Buena': 'Excelente',
+            'Buena': 'Buena',
+            'Regular': 'Regular',
+            'Mala': 'Mala',
+            'Muy Mala': 'MuyMala'
+        };
+
+        return (
+            <div className={deviceStyles.imageContainer}>
+                <img 
+                    className={deviceStyles.image}
+                    src={`/gifsEmogis/${gifs[estado]}.gif`}
+                    alt={estado}
+                />
+            </div>
+        );
+    };
+
+    const handleRegalo = () => {
+        navigate('/clientes/regalo');
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 h-screen flex flex-col justify-center items-center relative">
-            {estado === '' && (
-                <div>
-                    <h1 className="text-4xl font-bold mb-6">Cargando...</h1>
+        <div className={deviceStyles.container}>
+            {estado === '' ? (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <h1 className="text-4xl font-bold">Cargando...</h1>
                 </div>
+            ) : (
+                <>
+                    <div className={deviceStyles.title}>
+                        {getTitleText()}
+                    </div>
+                    {renderFace()}
+                    <button 
+                        onClick={handleRegalo} 
+                        className={deviceStyles.button}
+                    >
+                        OBTENER REGALO
+                    </button>
+                </>
             )}
-            {estado === 'Muy Buena' && (
-                 <a className='absolute font-now leading-[80%] top-[10%] transform text-[200px] tracking-[15px] text-gray-500'>
-                    MUY BUENO
-                </a>
-            )}
-            {estado === 'Buena' && (
-                 <a className='absolute font-now leading-[80%] top-[10%] transform text-[200px] tracking-[15px] text-gray-500'>
-                    BUENO
-                </a>
-            )}
-            {estado === 'Regular' && (
-                 <a className='absolute font-now leading-[80%] top-[10%] transform text-[200px] tracking-[15px] text-gray-500'>
-                    ACEPTABLE
-                </a>
-            )}
-            {estado === 'Mala' && (
-                 <a className='absolute font-now leading-[80%] top-[10%] transform text-[200px] tracking-[15px] text-gray-500'>
-                    DEFICIENTE
-                </a>
-            )}
-            {estado === 'Muy Mala' && (
-                <a className='absolute font-now leading-[80%] top-[10%] transform text-[200px] tracking-[15px] text-gray-500'>
-                    MALO
-                </a>
-            )}
-
-            <div className="face-container">
-                {renderFace()}
-            </div>
         </div>
     );
 };
+
+export default Despedida;

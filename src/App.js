@@ -7,6 +7,7 @@ import { Inicio } from './Inicio';
 import PaginaAdministrador from './Admin/index.admin';
 import { Despedida } from './Despedida/index.despedida';
 import { Salida } from './Salida/index.salida';
+import { Formulario } from './Formulario/index';
 
 const routesByRole = {
   USUARIO: [
@@ -18,6 +19,7 @@ const routesByRole = {
     { path: '/clientes/despedida/mala', component: Despedida },
     { path: '/clientes/despedida/muymala', component: Despedida },
     { path: '/clientes/salida', component: Salida },
+    { path: '/clientes/regalo', component: Formulario },
 
   ],
   ADMINISTRADOR: [

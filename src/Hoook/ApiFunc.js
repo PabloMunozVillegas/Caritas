@@ -2,7 +2,7 @@ import axios from 'axios';
 import useToken from '../useToken'; 
 
 const useApiFunctions = () => {;
-    const url = 'http://localhost:5000/api';
+    const url = 'http://192.168.7.160:5000/api';
     const { token} = useToken();
     const Enlaces = {
         EnlacesGet: {
