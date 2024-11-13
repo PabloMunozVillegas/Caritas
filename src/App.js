@@ -10,7 +10,7 @@ import { Salida } from './Salida/index.salida';
 import { Formulario } from './Formulario/index';
 
 const routesByRole = {
-  USUARIO: [
+  Usuario: [
     { path: '/clientes', component: Inicio },
     { path: '/clientes/calificar', component: CarasSeleccionar },
     { path: '/clientes/despedida/muybuena', component: Despedida },
@@ -22,7 +22,7 @@ const routesByRole = {
     { path: '/clientes/regalo', component: Formulario },
 
   ],
-  ADMINISTRADOR: [
+  Administrador: [
     { path: '/admin', component: PaginaAdministrador },
   ],
 };

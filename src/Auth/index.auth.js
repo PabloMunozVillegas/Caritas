@@ -22,6 +22,7 @@ const InicioSesion = () => {
       if (response.token) {
         console.log('Token recibido:', response);
         setTokenAndRole(response.token, response.rol);
+        
       }
     } catch (error) {
       console.error('Error en la solicitud:', error);
