@@ -1,6 +1,6 @@
 import axios from 'axios';
 import useToken from '../useToken';
-import  {serverUrl} from '../config/serverUrl.config';
+import  {serverUrl} from '../Functions/config/serverUrl.config';
 
 const useApiFunctions = () => {;
     const url = serverUrl;
