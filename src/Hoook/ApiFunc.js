@@ -1,8 +1,9 @@
 import axios from 'axios';
-import useToken from '../useToken'; 
+import useToken from '../useToken';
+import  {serverUrl} from '../config/serverUrl.config';
 
 const useApiFunctions = () => {;
-    const url = 'http://192.168.7.160:5000/api';
+    const url = serverUrl;
     const { token} = useToken();
     const Enlaces = {
         EnlacesGet: {
