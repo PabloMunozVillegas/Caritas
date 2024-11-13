@@ -15,8 +15,8 @@ const CrearUsuarios = () => {
             type: 'select', 
             apiEndpoint: null,
             options: [
-                { _id: 'USUARIO', nombre: 'Usuario' },
-                { _id: 'ADMINISTRADOR', nombre: 'Administrador' }
+                { _id: 'Usuario', nombre: 'Usuario' },
+                { _id: 'Administrador', nombre: 'Administrador' }
             ]
         }
     ];
