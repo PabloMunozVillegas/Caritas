@@ -25,10 +25,10 @@ export const Despedida = () => {
         },
         desktop: {
             container: "flex flex-col items-center justify-between min-h-screen relative bg-white overflow-hidden",
-            title: "absolute font-now top-[10%] left-1/2 -translate-x-1/2 text-gray-500 text-[9vw] leading-[1em] tracking-[0.2em] w-full text-center px-8",
-            imageContainer: "absolute top-[53%] left-1/2 -translate-x-1/2 -translate-y-1/2",
+            title: "absolute font-now top-[20%] left-1/2 -translate-x-1/2 text-gray-500 text-[9vw] leading-[1em] tracking-[0.2em] w-full text-center px-8",
+            imageContainer: "absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2",
             image: "w-[50vw] h-[45vh] object-contain",
-            button: "absolute font-now top-[80%] left-1/2 -translate-x-1/2 text-gray-500 border-4 border-gray-500 text-[4vw] tracking-[0.1em] px-8 py-3 w-[45vw] text-center hover:bg-gray-500 hover:text-white transition-colors duration-300"
+            button: "absolute font-now top-[90%] left-1/2 -translate-x-1/2 text-gray-500 border-4 border-gray-500 text-[4vw] tracking-[0.1em] px-8 py-3 w-[45vw] text-center hover:bg-gray-500 hover:text-white transition-colors duration-300"
         }
     };
 
@@ -63,7 +63,7 @@ export const Despedida = () => {
             timeout = setTimeout(() => {
                 setInactive(true);
                 navigate('/clientes/salida');
-            }, 300000);
+            }, 3000);
         };
 
         window.addEventListener('mousemove', handleActivity);
@@ -129,12 +129,12 @@ export const Despedida = () => {
                         {getTitleText()}
                     </div>
                     {renderFace()}
-                    <button 
+                    {/*<button 
                         onClick={handleRegalo} 
                         className={deviceStyles.button}
                     >
                         OBTENER REGALO
-                    </button>
+                    </button>*/}
                 </>
             )}
         </div>
