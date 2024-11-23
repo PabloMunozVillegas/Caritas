@@ -8,6 +8,7 @@ import PaginaAdministrador from './Admin/index.admin';
 import { Despedida } from './Despedida/index.despedida';
 import { Salida } from './Salida/index.salida';
 import { Formulario } from './Formulario/index';
+import { Toaster } from 'react-hot-toast';
 
 const routesByRole = {
   Usuario: [
@@ -71,6 +72,7 @@ function App() {
 
   return (
     <div className={isDarkMode ? 'dark' : ''}>
+      
       <Routes>
         <Route path="/" element={!isAuthenticated ? <InicioSesion /> : <Navigate to={routesByRole[role]?.[0]?.path || '/'} />} />
         

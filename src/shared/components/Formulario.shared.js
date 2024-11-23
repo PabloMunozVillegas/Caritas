@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
+const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo, styleConfig, submitButtonText }) => {
     const [formData, setFormData] = useState(
         fields.reduce((acc, field) => ({ ...acc, [field.realName]: '' }), {})
     );
@@ -14,13 +14,11 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
         selectFields.forEach(async (field) => {
             try {
                 const data = await obtenerTodo(field.apiEndpoint);
-                console.log('Datos obtenidos:', data);
                 setApiData(prevData => ({
                     ...prevData,
                     [field.realName]: data
                 }));
             } catch (error) {
-                console.error(`Error fetching data for ${field.realName}:`, error);
             }
         });
     }, [fields, obtenerTodo]);
@@ -42,7 +40,6 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
             ...formData,
             [name]: value
         });
-        // Limpiar error cuando el usuario empiece a escribir
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -65,8 +62,16 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
         return apiData[field.realName] || [];
     };
 
+    // Configuración de estilos predeterminados y sobrescritura con `styleConfig`
+    const {
+        formClass = "max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg",
+        inputClass = "w-full p-3 border rounded-lg shadow-sm focus:outline-none transition duration-300 ease-in-out",
+        buttonClass = "w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none transition duration-300",
+        errorClass = "text-red-500 text-sm mt-1",
+    } = styleConfig || {};
+
     return (
-        <form onSubmit={onSubmit} className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <form onSubmit={onSubmit} className={`${formClass} sm:p-6 md:p-8`}>
             {fields.map((field, index) => (
                 <div key={index} className="mb-6">
                     <label className="block text-gray-700 font-semibold mb-2">
@@ -78,7 +83,7 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
                                 name={field.realName}
                                 value={formData[field.realName]}
                                 onChange={handleChange}
-                                className={`w-full p-3 border ${errors[field.realName] ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out hover:bg-blue-50`}
+                                className={`${inputClass} ${errors[field.realName] ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 hover:bg-blue-50`}
                             >
                                 <option value="">Seleccione una opción</option>
                                 {getSelectOptions(field).map(option => (
@@ -88,7 +93,7 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
                                 ))}
                             </select>
                             {errors[field.realName] && (
-                                <p className="text-red-500 text-sm mt-1">{errors[field.realName]}</p>
+                                <p className={errorClass}>{errors[field.realName]}</p>
                             )}
                         </>
                     ) : (
@@ -98,11 +103,11 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
                                 name={field.realName}
                                 value={formData[field.realName]}
                                 onChange={handleChange}
-                                className={`w-full p-3 border ${errors[field.realName] ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out hover:bg-blue-50`}
+                                className={`${inputClass} ${errors[field.realName] ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 hover:bg-blue-50`}
                                 placeholder={`Ingresa tu ${field.label.toLowerCase()}`}
                             />
                             {errors[field.realName] && (
-                                <p className="text-red-500 text-sm mt-1">{errors[field.realName]}</p>
+                                <p className={errorClass}>{errors[field.realName]}</p>
                             )}
                         </>
                     )}
@@ -110,9 +115,9 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo }) => {
             ))}
             <button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out"
+                className={`${buttonClass} sm:py-2 sm:px-4 md:py-3 md:px-6`}
             >
-                Crear Usuario
+                {submitButtonText || 'Enviar'}
             </button>
         </form>
     );

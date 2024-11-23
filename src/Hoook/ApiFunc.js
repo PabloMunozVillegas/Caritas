@@ -43,7 +43,6 @@ const useApiFunctions = () => {;
             });
             return response.data;
         } catch (error) {
-            console.error('Error fetching data:', error.response.data.message);
             throw error; 
         }
     };
@@ -67,7 +66,6 @@ const useApiFunctions = () => {;
                 return response.data;
             }
         } catch (error) {
-            console.error('Error posting data:', error.response.data.message);
             throw error;
         }
     };
@@ -85,7 +83,6 @@ const useApiFunctions = () => {;
             });
             return response.data;
         } catch (error) {
-            console.error('Error patching data:', error.response.data.message);
             throw error;
         }
     };
@@ -102,7 +99,6 @@ const useApiFunctions = () => {;
             });
             return response.data;
         } catch (error) {
-            console.error('Error deleting data:', error.response.data.message);
             throw error;
         }
     };
