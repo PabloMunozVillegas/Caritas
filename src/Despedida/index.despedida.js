@@ -58,19 +58,32 @@ export const Despedida = () => {
 
     useEffect(() => {
         let timeout;
-        const handleActivity = () => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                setInactive(true);
-                navigate('/clientes/salida');
-            }, 3000);
+
+        const startInactivityTimer = () => {
+            // Si ya está configurado el timeout, no hace nada.
+            if (!timeout) {
+                timeout = setTimeout(() => {
+                    setInactive(true);
+                    navigate('/clientes/salida');
+                }, 3000); // Siempre 3 segundos
+            }
         };
 
+        const handleActivity = () => {
+            // Si hay actividad, simplemente se asegura de que no está inactivo.
+            setInactive(false);
+        };
+
+        // Inicia el temporizador de inactividad cuando se monta el componente.
+        startInactivityTimer();
+
+        // Agrega los eventos de actividad.
         window.addEventListener('mousemove', handleActivity);
         window.addEventListener('keydown', handleActivity);
         window.addEventListener('touchstart', handleActivity);
 
         return () => {
+            // Limpia los eventos y el temporizador cuando el componente se desmonta.
             window.removeEventListener('mousemove', handleActivity);
             window.removeEventListener('keydown', handleActivity);
             window.removeEventListener('touchstart', handleActivity);

@@ -12,10 +12,6 @@ export const Salida = () => {
             navigate('/clientes'); // Redirige a /clientes después de 3 segundos de inactividad
         }, 3000);
 
-        const handleClick = () => {
-            clearTimeout(timeout); // Cancela el timeout si hay un clic
-        };
-
         // Escuchar evento de clic
         window.addEventListener('click', handleClick);
 
