@@ -5,24 +5,20 @@ import useScreenSize from "../shared/hooks/useScreenSize";
 export const Salida = () => {
     const navigate = useNavigate();
     const [inactive, setInactive] = useState(false);
+    const { deviceType } = useScreenSize();
 
     useEffect(() => {
+        // Configura el temporizador de 3 segundos al montar el componente
         const timeout = setTimeout(() => {
             setInactive(true);
-            navigate('/clientes'); // Redirige a /clientes después de 3 segundos de inactividad
+            navigate('/clientes'); // Redirige a /clientes después de 3 segundos
         }, 3000);
-
-        // Escuchar evento de clic
-        window.addEventListener('click', handleClick);
 
         // Limpieza al desmontar el componente
         return () => {
-            window.removeEventListener('click', handleClick);
             clearTimeout(timeout);
         };
     }, [navigate]);
-
-    const { deviceType } = useScreenSize();
 
     const styles = {
         mobile: {
@@ -59,3 +55,5 @@ export const Salida = () => {
         </div>
     );
 };
+
+export default Salida;
