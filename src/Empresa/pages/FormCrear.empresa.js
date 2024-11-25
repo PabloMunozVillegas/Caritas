@@ -1,18 +1,23 @@
 import React from 'react';
 import FormularioDinamico from '../../shared/components/Formulario.shared';
-import useApiFunctions from '../../Hoook/ApiFunc';
+import {crearEmpresa} from '../api/apiPost';
 import { Toaster, toast } from 'react-hot-toast';
+import { useAuth } from '../../useContext';
+import useApiFunctions from '../../Hoook/ApiFunc';
+
 
 const CrearEmpresa = () => {
+    const { token } = useAuth();
     const fields = [
-        { label: 'Nombre', realName: 'nombre', type: 'text', apiEndpoint: null }
+        { label: 'NOMBRE', realName: 'nombre', type: 'text', apiEndpoint: null }
     ];
-
-    const { crearTodo, obtenerTodo } = useApiFunctions();
+    const { obtenerTodo } = useApiFunctions();
 
     const handleSubmit = async (formData) => {
+        
+        
         try {
-            const response = await crearTodo('crearEmpresa', null, formData);
+            const response = await crearEmpresa(formData, token);
             if (response.status === 201) {
                 toast.success('Empresa creada exitosamente');
             } else {

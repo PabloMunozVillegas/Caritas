@@ -1,10 +1,9 @@
 import axios from 'axios';
-import useToken from '../useToken';
 import  {serverUrl} from '../Functions/config/serverUrl.config';
+import { useAuth } from '../useContext';
 
 const useApiFunctions = () => {;
     const url = serverUrl;
-    const { token} = useToken();
     const Enlaces = {
         EnlacesGet: {
             listarEmpresa: url + '/empresa/listar',
@@ -28,6 +27,9 @@ const useApiFunctions = () => {;
             // Define your DELETE endpoints here
         },
     };
+
+    const { token } = useAuth();
+
         
     const obtenerTodo = async (endpoint, urlExtra, params) => {
         const extraUrl = urlExtra

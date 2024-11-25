@@ -4,13 +4,13 @@ import useApiFunctions from '../../Hoook/ApiFunc';
 
 const CrearUsuarios = () => {
     const fields = [
-        { label: 'Nombre', realName: 'nombres', type: 'text', apiEndpoint: null }, // Cambiado de 'nombre' a 'nombres'
-        { label: 'Apellido', realName: 'apellidos', type: 'text', apiEndpoint: null },
-        { label: 'Usuario', realName: 'user', type: 'text', apiEndpoint: null },
-        { label: 'Contraseña', realName: 'password', type: 'password', apiEndpoint: null }, // Cambiado type a password
-        { label: 'Empresa', realName: 'sucursal', type: 'select', apiEndpoint: 'listarSucursal' }, // Cambiado de 'empresa' a 'sucursal'
+        { label: 'NOMBRE', realName: 'nombres', type: 'text', apiEndpoint: null }, // Cambiado de 'nombre' a 'nombres'
+        { label: 'APELLIDO', realName: 'apellidos', type: 'text', apiEndpoint: null },
+        { label: 'USUARIO', realName: 'user', type: 'text', apiEndpoint: null },
+        { label: 'CONTRASEÑA', realName: 'password', type: 'password', apiEndpoint: null }, // Cambiado type a password
+        { label: 'EMPRESA', realName: 'sucursal', type: 'select', apiEndpoint: 'listarSucursal' }, // Cambiado de 'empresa' a 'sucursal'
         { 
-            label: 'Rol', 
+            label: 'ROL', 
             realName: 'rol', 
             type: 'select', 
             apiEndpoint: null,

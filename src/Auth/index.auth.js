@@ -1,92 +1,225 @@
-import React, { useState} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import useApiFunctions from '../Hoook/ApiFunc';
-import useToken from '../useToken';
+import React, { useState } from 'react';
+import { useAuth } from '../useContext';
+import { iniciarSesion } from './api/apiPost';
+import toast from 'react-hot-toast'; 
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, XCircle } from 'lucide-react';
 
-const InicioSesion = () => {
+const Login = () => {
   const [formData, setFormData] = useState({ user: '', password: '' });
-  const { setTokenAndRole ,  isAuthenticated } = useToken();
-  const { crearTodo } = useApiFunctions();
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-
+  const [loginStatus, setLoginStatus] = useState(null);
+  const [errorShake, setErrorShake] = useState(false);
+  const { login } = useAuth();
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
-    
+    setLoginStatus(null);
+    setErrorShake(false);
+  
     try {
-      const response = await crearTodo('inicioSesion', null, formData);
-      if (response.token) {
-        console.log('Token recibido:', response);
-        setTokenAndRole(response.token, response.rol);
-        
-      }
+      const response = await iniciarSesion(formData);
+  
+      setLoginStatus('success');
+      
+      setTimeout(() => {
+        setFormData({ user: '', password: '' }); // Vaciar los inputs después de éxito
+        login(response.token, response.rol);
+        toast.success('Inicio de sesión exitoso');
+      }, 1500);
     } catch (error) {
-      console.error('Error en la solicitud:', error);
-      // Aquí podrías mostrar un mensaje de error al usuario
-    } finally {
-      setLoading(false);
+      setLoginStatus('error');
+      setErrorShake(true);
+  
+      setTimeout(() => {
+        setLoginStatus(null);
+        setErrorShake(false);
+        setFormData({ user: '', password: '' }); // Vaciar los inputs después del error
+        toast.error('Error al iniciar sesión');
+      }, 1500);
+  
+      console.error('Error during login:', error);
     }
   };
   
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const handleChangeLogin = (event) => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prevFormData) => ({ 
+      ...prevFormData, 
+      [name]: value 
+    }));
   };
 
-  if (isAuthenticated) {
-    return null;
-  }
-
+  const fallingLettersVariants = {
+    initial: { opacity: 1, y: 0, rotate: 0 },
+    falling: { 
+      opacity: [1, 1, 0],
+      y: [0, 10, 100],
+      rotate: [0, 10, -20],
+      transition: { 
+        duration: 0.6,
+        times: [0, 0.5, 1],
+        ease: "easeInOut"
+      }
+    }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="bg-gray-300 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-700">Iniciar Sesión</h2>
-        <form onSubmit={handleFormSubmit}>
-          <input
-            type="text"
-            name="user"
-            value={formData.user}
-            placeholder="Correo"
-            onChange={handleChangeLogin}
-            className="w-full px-4 py-2 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            required
-          />
-          <div className="relative mb-4">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              name="password"
-              value={formData.password}
-              placeholder="Contraseña"
-              onChange={handleChangeLogin}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-              required
-            />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 focus:outline-none"
-            >
-              <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-            </button>
-          </div>
-          <button
-            type="submit"
-            className={`w-full px-4 py-2 rounded-lg text-white ${loading ? 'bg-lime-400' : 'bg-lime-500 hover:bg-lime-600'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500`}
-            disabled={loading}
+    <div className="min-h-screen flex justify-center items-center p-6">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md border border-gray-300"
+      >
+        <h2 className="text-4xl font-bold text-center text-gray-800 mb-6 tracking-tight">
+          Bienvenido
+        </h2>
+        
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <motion.div 
+            initial={{ x: 0 }}
+            animate={{ 
+              x: loginStatus === 'error' ? [0, -10, 10, -10, 0] : 0 
+            }}
+            transition={{ duration: 0.5 }}
           >
-            {loading ? 'Cargando...' : 'Iniciar Sesión'}
-          </button>
+            <label htmlFor="user" className="block text-lg font-medium text-gray-700 mb-2">
+              Usuario
+            </label>
+            <div className="relative">
+              {errorShake ? (
+                <AnimatePresence>
+                  {formData.user.split('').map((char, index) => (
+                    <motion.span
+                      key={index}
+                      initial="initial"
+                      animate="falling"
+                      variants={fallingLettersVariants}
+                      className="inline-block"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </AnimatePresence>
+              ) : (
+                <input 
+                  type="text" 
+                  id="user" 
+                  name="user" 
+                  value={formData.user} 
+                  onChange={handleInputChange}
+                  className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300"
+                  placeholder="Ingresa tu usuario" 
+                  required 
+                />
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ x: 0 }}
+            animate={{ 
+              x: loginStatus === 'error' ? [0, -10, 10, -10, 0] : 0 
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            <label htmlFor="password" className="block text-lg font-medium text-gray-700 mb-2">
+              Contraseña
+            </label>
+            <div className="relative">
+              {errorShake ? (
+                <AnimatePresence>
+                  {formData.password.split('').map((char, index) => (
+                    <motion.span
+                      key={index}
+                      initial="initial"
+                      animate="falling"
+                      variants={fallingLettersVariants}
+                      className="inline-block"
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </AnimatePresence>
+              ) : (
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password" 
+                  value={formData.password} 
+                  onChange={handleInputChange}
+                  className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300"
+                  placeholder="Ingresa tu contraseña" 
+                  required 
+                />
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 1 }}
+            animate={{ 
+              scale: loginStatus ? 1.05 : 1,
+              backgroundColor: 
+                loginStatus === 'success' ? '#10B981' :  // Green
+                loginStatus === 'error' ? '#EF4444' :    // Red
+                '#BFBFB'                                // Custom Blue
+            }}
+            transition={{ duration: 0.4 }}
+            className="relative w-full"
+          >
+            <button 
+              type="submit" 
+              disabled={loginStatus !== null}
+              className={`w-full p-4 text-white font-semibold rounded-lg transition duration-300 ease-in-out focus:outline-none shadow-lg ${
+                loginStatus !== null ? 'cursor-not-allowed' : 'hover:bg-gray-600'
+              }`}
+            >
+              <AnimatePresence>
+                {loginStatus === null && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center justify-center"
+                  >
+                    Iniciar Sesión
+                  </motion.div>
+                )}
+                {loginStatus === 'success' && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <CheckCircle2 className="w-6 h-6" />
+                  </motion.div>
+                )}
+                {loginStatus === 'error' && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <XCircle className="w-6 h-6" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+          </motion.div>
+
+          <div className="text-center text-sm text-gray-500 mt-4">
+            <a href="#" className="hover:text-gray-600 transition duration-300">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };
 
-export default InicioSesion;
+export default Login;

@@ -104,7 +104,7 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo, styleConfig, su
                                 value={formData[field.realName]}
                                 onChange={handleChange}
                                 className={`${inputClass} ${errors[field.realName] ? 'border-red-500' : 'border-gray-300'} focus:ring-blue-500 hover:bg-blue-50`}
-                                placeholder={`Ingresa tu ${field.label.toLowerCase()}`}
+                                placeholder={`Ingresa el ${field.label.toLowerCase()}`}
                             />
                             {errors[field.realName] && (
                                 <p className={errorClass}>{errors[field.realName]}</p>

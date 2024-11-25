@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import useApiFunctions from '../../Hoook/ApiFunc';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileExcel, FaFilePdf, FaSearch } from 'react-icons/fa';
+import { obtenerEmpresas } from '../api/apiGet';
+import { useAuth } from '../../useContext';
 
 const ListarEmpresas = () => {
     const [empresas, setEmpresas] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const { obtenerTodo } = useApiFunctions();
+    const { token } = useAuth();
 
-    const fetchEmpresas = async () => {
+    const obtEmpresas = async () => {
         try {
-            const data = await obtenerTodo('listarEmpresa');
+            const data = await obtenerEmpresas(token);
             setEmpresas(data);
         } catch (error) {
             console.error('Error fetching empresas:', error);
@@ -22,7 +23,7 @@ const ListarEmpresas = () => {
     };
 
     useEffect(() => {
-        fetchEmpresas();
+        obtEmpresas();
     }, []);
 
     const handleQuickDateRange = (range) => {

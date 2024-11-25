@@ -5,8 +5,8 @@ import {Toaster, toast} from 'react-hot-toast';
 
 const CrearSucursal = () => {
     const fields = [
-        { label: 'Nombre', realName: 'nombre' , type: 'text', apiEndpoint: null },
-        { label: 'Empresa', realName: 'empresa' , type: 'select', apiEndpoint: 'listarEmpresa' }
+        { label: 'NOMBRE', realName: 'nombre' , type: 'text', apiEndpoint: null },
+        { label: 'EMPRESA', realName: 'empresa' , type: 'select', apiEndpoint: 'listarEmpresa' }
     ];
     
     const { crearTodo, obtenerTodo } = useApiFunctions();  // Add obtenerTodo here
