@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../useContext';
+import {getEmpresas, getSucursales} from '../../Usuarios/api/apiGet';
 
 const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo, styleConfig, submitButtonText }) => {
     const [formData, setFormData] = useState(
         fields.reduce((acc, field) => ({ ...acc, [field.realName]: '' }), {})
     );
+    const { token } = useAuth();
 
     const [apiData, setApiData] = useState({});
     const [errors, setErrors] = useState({});
@@ -13,7 +16,7 @@ const FormularioDinamico = ({ fields, handleSubmit, obtenerTodo, styleConfig, su
 
         selectFields.forEach(async (field) => {
             try {
-                const data = await obtenerTodo(field.apiEndpoint);
+                const data = await field.apiEndpoint(token);
                 setApiData(prevData => ({
                     ...prevData,
                     [field.realName]: data

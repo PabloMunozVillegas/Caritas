@@ -1,0 +1,2 @@
+dnp det   dnp izq
+add der   add izq

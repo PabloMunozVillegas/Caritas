@@ -22,7 +22,7 @@ const Login = () => {
       setLoginStatus('success');
       
       setTimeout(() => {
-        setFormData({ user: '', password: '' }); // Vaciar los inputs después de éxito
+        setFormData({ user: '', password: '' });
         login(response.token, response.rol);
         toast.success('Inicio de sesión exitoso');
       }, 1500);
@@ -33,7 +33,7 @@ const Login = () => {
       setTimeout(() => {
         setLoginStatus(null);
         setErrorShake(false);
-        setFormData({ user: '', password: '' }); // Vaciar los inputs después del error
+        setFormData({ user: '', password: '' }); 
         toast.error('Error al iniciar sesión');
       }, 1500);
   
