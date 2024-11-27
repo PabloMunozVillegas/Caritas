@@ -1,200 +1,206 @@
 import React, { useEffect, useState } from 'react';
-import useApiFunctions from '../../Hoook/ApiFunc';
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { FaFileExcel, FaFilePdf, FaSearch } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaEdit, FaTrash, FaEye, FaPlus, FaBuilding } from 'react-icons/fa';
+import toast, { Toaster } from "react-hot-toast";
+import CrearSucursales from '../components/ModalFormCrear.Sucursales';
+import EditarSucursales from '../components/ModalFormEditar.Sucursales';
+import SucursalProfileModal from '../components/ModalInfo.Sucursales';
+import { obtenerSucursales, obtenerSucursalId, obtenerEmpresaId} from '../api/apiGet'; 
+import { eliminarSucursal } from '../api/apiDelete';
+import { useAuth } from '../../useContext';
 
-const ListarEmpresas = () => {
-    const [empresas, setEmpresas] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const { obtenerTodo } = useApiFunctions();
+const ListarSucursales = () => {
+    const [datosTabla, setDatosTabla] = useState([]);
+    const [sucursalDataModal, setSucursalDataModal] = useState(null);
+    const [selectedSucursal, setSelectedSucursal] = useState(null);
+    const [isModalOpenSucursalCreate, setIsModalOpenSucursalCreate] = useState(false);
+    const [isModalOpenSucursalUpdate, setIsModalOpenSucursalUpdate] = useState(false);
+    const [isModalOpenSucursalProfile, setIsModalOpenSucursalProfile] = useState(false);
+    const { token } = useAuth();
 
-    const fetchEmpresas = async () => {
+    const fetchSucursales = async () => {
         try {
-            const data = await obtenerTodo('listarSucursal');
-            setEmpresas(data);
+            const sucursales = await obtenerSucursales(token);
+            
+            const sucursalesConEmpresas = await Promise.all(
+                sucursales.map(async (sucursal) => {
+                    const empresa = await obtenerEmpresaId(sucursal.empresa, token);
+                    return { ...sucursal, empresa };
+                })
+            );
+            console.log('Datos obtenidos:', sucursalesConEmpresas);
+            // Set the updated data with empresa information
+            setDatosTabla(sucursalesConEmpresas);
+    
+            toast.success('Sucursales obtenidas exitosamente', {
+                style: { background: '#333', color: '#fff' },
+            });
         } catch (error) {
-            console.error('Error fetching empresas:', error);
+            toast.error('Error al obtener sucursales', {
+                style: { background: '#ff4b4b', color: '#fff' },
+            });
         }
     };
 
     useEffect(() => {
-        fetchEmpresas();
-    }, []);
+        fetchSucursales();
+    }, [token]);
 
-    const filteredEmpresas = empresas.filter((empresa) => {
-        const fecha = new Date(empresa.fecha);
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate) : null;
-
-        return (
-            empresa.nombre.toLowerCase().includes(searchQuery.toLowerCase()) &&
-            (!start || fecha >= start) &&
-            (!end || fecha <= end)
-        );
-    });
-
-    const handleQuickFilter = (type) => {
-        const now = new Date();
-        switch (type) {
-            case 'hoy':
-                setStartDate(now.toISOString().split('T')[0]);
-                setEndDate(now.toISOString().split('T')[0]);
-                break;
-            case 'semana':
-                const startOfWeek = new Date(now);
-                startOfWeek.setDate(now.getDate() - now.getDay());
-                setStartDate(startOfWeek.toISOString().split('T')[0]);
-                setEndDate(now.toISOString().split('T')[0]);
-                break;
-            case 'mes':
-                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-                setStartDate(startOfMonth.toISOString().split('T')[0]);
-                setEndDate(now.toISOString().split('T')[0]);
-                break;
-            default:
-                setStartDate('');
-                setEndDate('');
-                break;
+    const handleEdit = async (id) => {
+        try {
+            const sucursal = await obtenerSucursalId(id, token);
+            setSucursalDataModal(sucursal);
+            setIsModalOpenSucursalUpdate(true);
+        } catch (error) {
+            toast.error("Error al obtener sucursal");
         }
     };
 
-    const exportToExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(
-            filteredEmpresas.map(({ nombre, fecha }) => ({
-                Nombre: nombre,
-                Fecha: new Date(fecha).toLocaleDateString(),
-            }))
-        );
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sucursales');
-        XLSX.writeFile(workbook, 'Lista_Sucursales.xlsx');
+    const handleDelete = async (id) => {
+        try {
+            await eliminarSucursal(id, token);
+            toast.success('Sucursal eliminada exitosamente');
+            await fetchSucursales();
+        } catch (error) {
+            toast.error('Error al eliminar sucursal');
+        }
     };
 
-    const exportToPDF = () => {
-        const doc = new jsPDF();
-        const tableColumn = ['Nombre', 'Fecha'];
-        const tableRows = filteredEmpresas.map(({ nombre, fecha }) => [
-            nombre,
-            new Date(fecha).toLocaleDateString(),
-        ]);
+    const handleViewProfile = async (id) => {
+        try {
+            const sucursal = await obtenerSucursalId(id, token);
+            setSelectedSucursal(sucursal);
+            setIsModalOpenSucursalProfile(true);
+        } catch (error) {
+            toast.error('Error al obtener detalles de la sucursal');
+        }
+    };
 
-        doc.text('Lista de Sucursales', 14, 20);
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 30,
-        });
-        doc.save('Lista_Sucursales.pdf');
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { delayChildren: 0.2, staggerChildren: 0.1 } },
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300 } },
     };
 
     return (
-        <div className="container mx-auto p-6">
-            <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">LISTA DE SUCURSALES</h1>
-
-            {/* Filtros */}
-            <div className="flex flex-wrap justify-center gap-4 mb-6">
-                <input
-                    type="text"
-                    placeholder="Buscar sucursal por nombre..."
-                    className="w-full md:w-1/4 p-3 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <input
-                    type="date"
-                    className="p-3 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                />
-                <input
-                    type="date"
-                    className="p-3 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                />
-                <div className="flex gap-2">
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition duration-300"
-                        onClick={() => handleQuickFilter('hoy')}
+        <motion.div
+            className="min-h-screen bg-gray-50 p-8"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+        >
+            <motion.div
+                className="container mx-auto bg-white shadow-xl rounded-2xl overflow-hidden"
+                variants={itemVariants}
+            >
+                <div className="p-6 bg-gradient-to-r from-green-600 to-green-400 text-white flex justify-between items-center">
+                    <div className="flex items-center space-x-4">
+                        <FaBuilding size={32} />
+                        <h1 className="text-3xl font-bold tracking-wide">Gestión de Sucursales</h1>
+                    </div>
+                    <motion.button
+                        onClick={() => setIsModalOpenSucursalCreate(true)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-white text-green-600 rounded-lg hover:bg-green-50 transition"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                     >
-                        Hoy
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition duration-300"
-                        onClick={() => handleQuickFilter('semana')}
-                    >
-                        Semana
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition duration-300"
-                        onClick={() => handleQuickFilter('mes')}
-                    >
-                        Mes
-                    </button>
+                        <FaPlus />
+                        <span>Añadir Sucursal</span>
+                    </motion.button>
                 </div>
-            </div>
-
-            {/* Botones de exportación */}
-            <div className="flex justify-center gap-4 mb-6">
-                <button
-                    onClick={exportToExcel}
-                    className="flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition duration-300"
-                >
-                    <FaFileExcel />
-                    Excel
-                </button>
-                <button
-                    onClick={exportToPDF}
-                    className="flex items-center gap-2 px-6 py-3 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition duration-300"
-                >
-                    <FaFilePdf />
-                    PDF
-                </button>
-            </div>
-
-            {/* Tabla */}
-            <div className="overflow-x-auto shadow-lg rounded-lg">
-                <table className="min-w-full bg-white border border-gray-200">
-                    <thead className="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
-                        <tr>
-                            <th className="py-3 px-6 text-left text-sm font-semibold uppercase tracking-wider">Nombre</th>
-                            <th className="py-3 px-6 text-left text-sm font-semibold uppercase tracking-wider">Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredEmpresas.length > 0 ? (
-                            filteredEmpresas.map((empresa, index) => (
-                                <tr
-                                    key={empresa._id}
-                                    className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-blue-100 transition duration-300`}
-                                >
-                                    <td className="py-3 px-6 text-gray-700 font-medium">{empresa.nombre}</td>
-                                    <td className="py-3 px-6 text-gray-500">
-                                        {new Date(empresa.fecha).toLocaleDateString()}
-                                    </td>
+                <div className="p-6">
+                    <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                            <thead>
+                                <tr className="bg-gray-100 text-gray-600 uppercase text-sm">
+                                    <th className="py-3 px-4 text-left">Nombre</th>
+                                    <th className="py-3 px-4 text-left">Empresa</th>
+                                    <th className="py-3 px-4 text-center">Acciones</th>
                                 </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="2" className="py-6 text-center text-gray-500">
-                                    No se encontraron sucursales.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            </thead>
+                            <tbody>
+                                <AnimatePresence>
+                                    {datosTabla.map((datosTablas) => (
+                                        <motion.tr
+                                            key={datosTablas._id}
+                                            className="border-b hover:bg-green-50 transition"
+                                            variants={itemVariants}
+                                            initial="hidden"
+                                            animate="visible"
+                                            exit={{ opacity: 0, height: 0 }}
+                                        >
+                                            <td className="py-4 px-4">{datosTablas.nombre}</td>
+                                            <td className="py-4 px-4">{datosTablas.empresa.nombre}</td>
+                                            <td className="py-4 px-4 text-center">
+                                                <div className="flex justify-center space-x-3">
+                                                    <motion.button
+                                                        onClick={() => handleEdit(datosTablas._id)}
+                                                        className="text-blue-500 hover:text-blue-700"
+                                                        whileHover={{ scale: 1.2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                    >
+                                                        <FaEdit />
+                                                    </motion.button>
+                                                    <motion.button
+                                                        onClick={() => handleDelete(datosTablas._id)}
+                                                        className="text-red-500 hover:text-red-700"
+                                                        whileHover={{ scale: 1.2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                    >
+                                                        <FaTrash />
+                                                    </motion.button>
+                                                    <motion.button
+                                                        onClick={() => handleViewProfile(datosTablas._id)}
+                                                        className="text-green-500 hover:text-green-700"
+                                                        whileHover={{ scale: 1.2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                    >
+                                                        <FaEye />
+                                                    </motion.button>
+                                                </div>
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </AnimatePresence>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </motion.div>
 
-            {/* Resumen */}
-            <div className="mt-6 text-center text-sm text-gray-500">
-                <p>Mostrando {filteredEmpresas.length} de {empresas.length} sucursales registradas.</p>
-            </div>
-        </div>
+            {sucursalDataModal && (
+                <EditarSucursales
+                    isOpen={isModalOpenSucursalUpdate}
+                    onClose={() => {
+                        setIsModalOpenSucursalUpdate(false);
+                        setSucursalDataModal(null);
+                        fetchSucursales();
+                    }}
+                    sucursalData={sucursalDataModal}
+                />
+            )}
+
+            <CrearSucursales
+                isOpen={isModalOpenSucursalCreate}
+                onClose={() => {
+                    setIsModalOpenSucursalCreate(false);
+                    fetchSucursales();
+                }}
+            />
+
+            <SucursalProfileModal
+                sucursal={selectedSucursal}
+                isOpen={isModalOpenSucursalProfile}
+                onClose={() => setIsModalOpenSucursalProfile(false)}
+            />
+
+            <Toaster position="top-right" reverseOrder={false} />
+        </motion.div>
     );
 };
 
-export default ListarEmpresas;
+export default ListarSucursales;

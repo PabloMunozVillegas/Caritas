@@ -1,67 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { getUsuarios, getUsuarioId } from '../api/apiGet';
+import { motion, AnimatePresence } from 'framer-motion';
+import { getUsuarios, getUsuarioId} from '../api/apiGet';
 import { useAuth } from '../../useContext';
-import { FaEdit, FaTrash, FaEye, FaPlus, FaUsers, FaEnvelope, FaBuilding, FaIdCard } from 'react-icons/fa';
-import { motion } from 'framer-motion';
-import CrearUsuarios from '../components/ModalFormCrear.usuarios';
+import { FaEdit, FaTrash, FaEye, FaPlus, FaUsers } from 'react-icons/fa';
 import toast, { Toaster } from "react-hot-toast";
+import CrearUsuarios from '../components/ModalFormCrear.usuarios';
 import EditarUsuarios from '../components/ModalFormEditar.usuarios';
+import UserProfileModal from '../components/ModalInfo.usuarios';
 import { eliminarUsuario } from '../api/apiDelete';
-
-const UserProfileModal = ({ user, isOpen, onClose }) => {
-    if (!isOpen || !user) return null;
-
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-2xl shadow-xl p-8 w-96 max-w-md"
-            >
-                <div className="flex justify-center mb-6">
-                    <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center">
-                        <FaUsers size={64} className="text-blue-500" />
-                    </div>
-                </div>
-                <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800">{user.nombres} {user.apellidos}</h2>
-                    <p className="text-blue-600 font-semibold">{user.rol}</p>
-                </div>
-                <div className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                        <FaIdCard className="text-blue-500" />
-                        <div>
-                            <p className="text-sm text-gray-600">Nombre de Usuario</p>
-                            <p className="font-medium">{user.user}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <FaEnvelope className="text-blue-500" />
-                        <div>
-                            <p className="text-sm text-gray-600">Correo Electrónico</p>
-                            <p className="font-medium">{user.email || 'No disponible'}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <FaBuilding className="text-blue-500" />
-                        <div>
-                            <p className="text-sm text-gray-600">Empresa</p>
-                            <p className="font-medium">{user.empresa}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="mt-6 flex justify-center">
-                    <button 
-                        onClick={onClose} 
-                        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                    >
-                        Cerrar
-                    </button>
-                </div>
-            </motion.div>
-        </div>
-    );
-};
 
 const ListarUsuarios = () => {
     const [datosTabla, setDatosTabla] = useState([]);
@@ -75,6 +21,7 @@ const ListarUsuarios = () => {
     const fetchUsuarios = async () => {
         try {
             const usuarios = await getUsuarios(token);
+            console.log('Datos obtenidos:', usuarios);
             setDatosTabla(usuarios);
             toast.success('Usuarios obtenidos exitosamente', {
                 style: {
@@ -122,7 +69,6 @@ const ListarUsuarios = () => {
         try {
             await eliminarUsuario(id, token);
             toast.success('Usuario eliminado exitosamente');
-            // Reload the user list after deletion
             await fetchUsuarios();
         } catch (error) {
             toast.error('Error al eliminar usuario');
@@ -139,22 +85,29 @@ const ListarUsuarios = () => {
         }
     };
 
-    const containerVariant = {
+    const containerVariants = {
         hidden: { opacity: 0 },
         visible: { 
             opacity: 1, 
             transition: { 
-                delayChildren: 0.3, 
-                staggerChildren: 0.2 
+                delayChildren: 0.2, 
+                staggerChildren: 0.1 
             } 
-        },
+        }
     };
 
-    const itemVariant = {
-        hidden: { y: 20, opacity: 0 },
+    const itemVariants = {
+        hidden: { 
+            y: 20, 
+            opacity: 0 
+        },
         visible: {
             y: 0,
             opacity: 1,
+            transition: {
+                type: "spring",
+                stiffness: 300
+            }
         }
     };
 
@@ -163,13 +116,12 @@ const ListarUsuarios = () => {
             className="min-h-screen bg-gray-50 p-8"
             initial="hidden"
             animate="visible"
-            variants={containerVariant}
+            variants={containerVariants}
         >
             <motion.div 
                 className="container mx-auto bg-white shadow-xl rounded-2xl overflow-hidden"
-                variants={itemVariant}
+                variants={itemVariants}
             >
-                {/* Rest of the existing component remains the same */}
                 <div className="p-6 bg-gradient-to-r from-blue-600 to-blue-400 text-white flex justify-between items-center">
                     <div className="flex items-center space-x-4">
                         <FaUsers size={32} />
@@ -199,53 +151,60 @@ const ListarUsuarios = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {datosTabla.map((usuario) => (
-                                    <motion.tr 
-                                        key={usuario._id} 
-                                        className="border-b hover:bg-blue-50 transition"
-                                        variants={itemVariant}
-                                    >
-                                        <td className="py-4 px-4">{usuario.nombres}</td>
-                                        <td className="py-4 px-4">{usuario.apellidos}</td>
-                                        <td className="py-4 px-4">{usuario.user}</td>
-                                        <td className="py-4 px-4">{usuario.empresa}</td>
-                                        <td className="py-4 px-4">
-                                            <span className={`
-                                                px-3 py-1 rounded-full text-xs font-bold
-                                                ${usuario.rol === 'Administrador' 
+                                <AnimatePresence>
+                                    {datosTabla.map((usuario) => (
+                                        <motion.tr 
+                                            key={usuario._id} 
+                                            className="border-b hover:bg-blue-50 transition"
+                                            variants={itemVariants}
+                                            initial="hidden"
+                                            animate="visible"
+                                            exit={{ opacity: 0, height: 0 }}
+                                        >
+                                            <td className="py-4 px-4">{usuario.nombres}</td>
+                                            <td className="py-4 px-4">{usuario.apellidos}</td>
+                                            <td className="py-4 px-4">{usuario.user}</td>
+                                            <td className="py-4 px-4">{usuario.empresa}</td>
+                                            <td className="py-4 px-4">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-bold 
+                                                    ${usuario.rol === 'Administrador' 
                                                     ? 'bg-green-200 text-green-800' 
                                                     : 'bg-blue-200 text-blue-800'}
-                                            `}>
-                                                {usuario.rol}
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-4 text-center">
-                                            <div className="flex justify-center space-x-3">
-                                                <motion.button 
-                                                    onClick={() => handleEdit(usuario._id, usuario.sucursal, usuario.empresa)}
-                                                    className="text-blue-500 hover:text-blue-700"
-                                                    whileHover={{ scale: 1.2 }}
-                                                >
-                                                    <FaEdit />
-                                                </motion.button>
-                                                <motion.button 
-                                                    onClick={() => handleDelete(usuario._id)}
-                                                    className="text-red-500 hover:text-red-700"
-                                                    whileHover={{ scale: 1.2 }}
-                                                >
-                                                    <FaTrash />
-                                                </motion.button>
-                                                <motion.button 
-                                                    onClick={() => handleViewProfile(usuario._id)}
-                                                    className="text-green-500 hover:text-green-700"
-                                                    whileHover={{ scale: 1.2 }}
-                                                >
-                                                    <FaEye />
-                                                </motion.button>
-                                            </div>
-                                        </td>
-                                    </motion.tr>
-                                ))}
+                                                `}>
+                                                    {usuario.rol}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4 text-center">
+                                                <div className="flex justify-center space-x-3">
+                                                    <motion.button 
+                                                        onClick={() => handleEdit(usuario._id, usuario.sucursal, usuario.empresa)}
+                                                        className="text-blue-500 hover:text-blue-700"
+                                                        whileHover={{ scale: 1.2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                    >
+                                                        <FaEdit />
+                                                    </motion.button>
+                                                    <motion.button 
+                                                        onClick={() => handleDelete(usuario._id)}
+                                                        className="text-red-500 hover:text-red-700"
+                                                        whileHover={{ scale: 1.2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                    >
+                                                        <FaTrash />
+                                                    </motion.button>
+                                                    <motion.button 
+                                                        onClick={() => handleViewProfile(usuario._id)}
+                                                        className="text-green-500 hover:text-green-700"
+                                                        whileHover={{ scale: 1.2 }}
+                                                        whileTap={{ scale: 0.9 }}
+                                                    >
+                                                        <FaEye />
+                                                    </motion.button>
+                                                </div>
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </AnimatePresence>
                             </tbody>
                         </table>
                     </div>
@@ -258,7 +217,6 @@ const ListarUsuarios = () => {
                     onClose={() => {
                         setIsModalOpenUserUpdate(false);
                         setUserDataModal(null);
-                        // Reload users after update
                         fetchUsuarios();
                     }} 
                     userData={userDataModal} 
@@ -269,7 +227,6 @@ const ListarUsuarios = () => {
                 isOpen={isModalOpenUserCreate} 
                 onClose={() => {
                     setIsModalOpenUserCreate(false);
-                    // Reload users after creation
                     fetchUsuarios();
                 }} 
             />

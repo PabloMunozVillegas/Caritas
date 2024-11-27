@@ -42,7 +42,7 @@ export const getSucursal = async (idSucursal, token) => {
     }
 };
 
-export const getEmpresa = async (idEmpresa, token) => {
+export const getEmpresaId = async (idEmpresa, token) => {
     try {
         const response = await axios.get(serverUrl + `/empresa/${idEmpresa}`, {
         
