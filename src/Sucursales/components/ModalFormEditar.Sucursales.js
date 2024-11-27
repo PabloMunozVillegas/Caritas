@@ -3,6 +3,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { useAuth } from "../../useContext";
 import { crearSucursal } from "../api/apiPost";
 import { obtenerEmpresas } from "../api/apiGet";
+import { actualizarSucursal } from "../api/apiPatch";
 
 const ModalEditarSucursal = ({ isOpen, onClose, sucursalData }) => {
   const [nombre, setNombre] = useState("");
@@ -42,12 +43,11 @@ const ModalEditarSucursal = ({ isOpen, onClose, sucursalData }) => {
 
     const formData = { nombre, empresaId };
     try {
-      const response = await crearSucursal(formData, token);
-      if (response.status === 201) {
+      const response = await actualizarSucursal(sucursalData._id, formData, token);
+      console.log('Datos actualizados:', response);
+      if (response.flag === "nuevo") {
         toast.success('Sucursal creada exitosamente');
         onClose();
-      } else {
-        toast.error(response.data.message || 'Error al crear sucursal');
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error al procesar la solicitud');

@@ -21,6 +21,7 @@ const ListarSucursales = () => {
     const fetchSucursales = async () => {
         try {
             const sucursales = await obtenerSucursales(token);
+            console.log('Datos obtenidos:', sucursales);
             
             const sucursalesConEmpresas = await Promise.all(
                 sucursales.map(async (sucursal) => {
@@ -75,7 +76,6 @@ const ListarSucursales = () => {
             toast.error('Error al obtener detalles de la sucursal');
         }
     };
-    
 
     const containerVariants = {
         hidden: { opacity: 0 },
