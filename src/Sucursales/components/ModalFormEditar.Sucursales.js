@@ -15,21 +15,23 @@ const ModalEditarSucursal = ({ isOpen, onClose, sucursalData }) => {
   // Obtener las empresas cuando el modal se abre
   useEffect(() => {
     if (isOpen) {
-        const fetchEmpresas = async () => {
-            try {
-                const response = await obtenerEmpresas(token); // Suponiendo que tienes un token disponible
-                if (response.status === 200) {
-                    setEmpresas(response.data);
-                } else {
-                    toast.error('Error al cargar empresas');
-                }
-            } catch (error) {
-                toast.error('Error al obtener empresas');
-            }
-        };
-        fetchEmpresas();}
-    }, [isOpen, token]);
+      const fetchEmpresas = async () => {
+        try {
+          const response = await obtenerEmpresas(token); // Suponiendo que la respuesta es directamente la lista de empresas
+          setEmpresas(response); // Establecer la lista de empresas directamente
 
+          // Si estamos editando una sucursal, configurar los valores iniciales
+          if (sucursalData) {
+            setNombre(sucursalData.nombre);
+            setEmpresaId(sucursalData.empresa); // Asignar el ID de la empresa de la sucursal
+          }
+        } catch (error) {
+          toast.error('Error al obtener empresas');
+        }
+      };
+      fetchEmpresas();
+    }
+  }, [isOpen, token, sucursalData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,16 +41,16 @@ const ModalEditarSucursal = ({ isOpen, onClose, sucursalData }) => {
     }
 
     const formData = { nombre, empresaId };
-    try{
-        const response = await crearSucursal(formData, token);
-        if (response.status === 201) {
-            toast.success('Sucursal creada exitosamente');
-            onClose();
-        } else {
-            toast.error(response.data.message || 'Error al crear sucursal');
-        }
-    }catch (error) {
-        toast.error(error.response?.data?.message || 'Error al procesar la solicitud');
+    try {
+      const response = await crearSucursal(formData, token);
+      if (response.status === 201) {
+        toast.success('Sucursal creada exitosamente');
+        onClose();
+      } else {
+        toast.error(response.data.message || 'Error al crear sucursal');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al procesar la solicitud');
     }
   };
 
@@ -84,7 +86,7 @@ const ModalEditarSucursal = ({ isOpen, onClose, sucursalData }) => {
             >
               <option value="">Selecciona una empresa</option>
               {empresas.map((empresa) => (
-                <option key={empresa.id} value={empresa.id}>
+                <option key={empresa._id} value={empresa._id}>
                   {empresa.nombre}
                 </option>
               ))}

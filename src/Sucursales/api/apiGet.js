@@ -29,12 +29,13 @@ export const obtenerSucursales = async (token) => {
 
 export const obtenerSucursalId = async (idSucursal, token) => {
     try {
-        const response = await axios.get(serverUrl + `/sucursal/listar/${idSucursal}`, {
+        const response = await axios.get(serverUrl + `/sucursal/${idSucursal}`, {
 
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
         });
+        console.log('Datos obtenidos respuesta:', response.data);
         return response.data;
     } catch (error) {
         throw error;

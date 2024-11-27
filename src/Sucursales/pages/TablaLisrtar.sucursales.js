@@ -75,6 +75,7 @@ const ListarSucursales = () => {
             toast.error('Error al obtener detalles de la sucursal');
         }
     };
+    
 
     const containerVariants = {
         hidden: { opacity: 0 },
