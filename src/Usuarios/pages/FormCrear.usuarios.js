@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../useContext";
 import { crearUsuario } from "../api/apiPost";
+import toast, { Toaster } from "react-hot-toast";
 import { getEmpresas, getSucursales } from "../api/apiGet";
 
 const AnimatedInputField = ({ label, name, type = "text", options = [], value, onChange }) => {
@@ -55,7 +56,6 @@ const CrearUsuarios = () => {
   const [sucursales, setSucursales] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const { token } = useAuth();
   const [form, setForm] = useState({
     nombres: "",
@@ -77,7 +77,7 @@ const CrearUsuarios = () => {
         const data = await getEmpresas(token);
         setEmpresas(data);
       } catch (error) {
-        console.error("Error al obtener empresas:", error);
+        toast.error(`Error al obtener empresas: ${error.message}`);
       }
     };
     fetchEmpresas();
@@ -93,22 +93,68 @@ const CrearUsuarios = () => {
           setSucursales([]);
         }
       } catch (error) {
-        console.error("Error al obtener sucursales:", error);
+        toast.error(`Error al obtener sucursales: ${error.message}`);
       }
     };
     fetchSucursales();
   }, [form.empresa, token]);
 
+  const validatePassword = (password) => {
+    const validations = [
+      { test: (p) => p.length >= 8, message: "La contraseña debe tener al menos 8 caracteres" },
+      { test: (p) => /[a-z]/.test(p), message: "La contraseña debe contener al menos una letra minúscula" },
+      { test: (p) => /[A-Z]/.test(p), message: "La contraseña debe contener al menos una letra mayúscula" },
+      { test: (p) => /[0-9]/.test(p), message: "La contraseña debe contener al menos un número" },
+      { test: (p) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p), message: "La contraseña debe contener al menos un carácter especial" }
+    ];
+
+    for (let validation of validations) {
+      if (!validation.test(password)) {
+        toast.error(validation.message);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
+
+    // Validate all fields are filled
+    const requiredFields = ['nombres', 'apellidos', 'user', 'password', 'empresa', 'sucursal', 'rol'];
+    for (let field of requiredFields) {
+      if (!form[field]) {
+        toast.error(`Por favor complete el campo ${field.charAt(0).toUpperCase() + field.slice(1)}`);
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    // Password validation
+    if (!validatePassword(form.password)) {
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await crearUsuario(form, token);
-      console.log("Usuario creado exitosamente:", response);
-      setSubmitSuccess(true);
-      setTimeout(() => setSubmitSuccess(false), 3000);
+      toast.success("Usuario creado exitosamente");
+      
+      // Reset form after successful creation
+      setForm({
+        nombres: "",
+        apellidos: "",
+        user: "",
+        password: "",
+        empresa: "",
+        sucursal: "",
+        rol: "",
+      });
     } catch (error) {
-      console.error("Error al crear usuario:", error);
+      // Check if error response has a specific message
+      const errorMessage = error.response?.data?.message || error.message || "Error al crear usuario";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -194,20 +240,8 @@ const CrearUsuarios = () => {
         >
           {isSubmitting ? 'Guardando...' : 'Guardar Usuario'}
         </motion.button>
-
-        <AnimatePresence>
-          {submitSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="mt-4 p-4 bg-green-100 text-green-700 rounded-md text-center"
-            >
-              ¡Usuario creado exitosamente!
-            </motion.div>
-          )}
-        </AnimatePresence>
       </form>
+      <Toaster position="top-right" reverseOrder={false} />
     </motion.div>
   );
 };

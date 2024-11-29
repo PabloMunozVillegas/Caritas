@@ -143,28 +143,31 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 ADMIN MENU
             </motion.h2>
 
-            {/* Menu Items */}
-            <MenuItem label="Empresa" icon={<MdBusiness className="h-6 w-6" />}>
-                <Link to="/admin/empresa/crear">Crear Empresa</Link>
-                <Link to="/admin/empresa/listar">Listar Empresas</Link>
-                <Link to="/admin/empresa/estadisticas">Estadísticas</Link>
-            </MenuItem>
-            <MenuItem label="Sucursal" icon={<MdStore className="h-6 w-6" />}>
-                <Link to="/admin/sucursal/crear">Crear Sucursal</Link>
-                <Link to="/admin/sucursal/listar">Listar Sucursal</Link>
-                <Link to="/admin/sucursal/estadisticas">Estadísticas Sucursal</Link>
-            </MenuItem>
-            <MenuItem label="Usuario" icon={<MdPerson className="h-6 w-6" />}>
-                <Link to="/admin/usuario/crear">Crear Usuario</Link>
-                <Link to="/admin/usuario/listar">Listar Usuario</Link>
-            </MenuItem>
-            <MenuItem label="Calificaciones" icon={<MdStar className="h-6 w-6" />}>
-                <Link to="/admin/calificaciones/listar">Listar Calificaciones</Link>
-            </MenuItem>
-            <MenuItem label="Correo" icon={<MdEmail className="h-6 w-6" />}>
-                <Link to="/admin/correo/crear">Crear Correo</Link>
-                <Link to="/admin/correo/listar">Listar Correo</Link>
-            </MenuItem>
+            {/* Contenedor con scroll */}
+            <div className="h-[calc(100vh-250px)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
+                <MenuItem label="Empresa" icon={<MdBusiness className="h-6 w-6" />}>
+                    <Link to="/admin/empresa/crear">Crear Empresa</Link>
+                    <Link to="/admin/empresa/listar">Listar Empresas</Link>
+                    <Link to="/admin/empresa/estadisticas">Estadísticas</Link>
+                </MenuItem>
+                <MenuItem label="Sucursal" icon={<MdStore className="h-6 w-6" />}>
+                    <Link to="/admin/sucursal/crear">Crear Sucursal</Link>
+                    <Link to="/admin/sucursal/listar">Listar Sucursal</Link>
+                    <Link to="/admin/sucursal/estadisticas">Estadísticas Sucursal</Link>
+                </MenuItem>
+                <MenuItem label="Usuario" icon={<MdPerson className="h-6 w-6" />}>
+                    <Link to="/admin/usuario/crear">Crear Usuario</Link>
+                    <Link to="/admin/usuario/listar">Listar Usuario</Link>
+                </MenuItem>
+                <MenuItem label="Calificaciones" icon={<MdStar className="h-6 w-6" />}>
+                    <Link to="/admin/calificaciones/listar">Listar Calificaciones</Link>
+                </MenuItem>
+                <MenuItem label="Correo" icon={<MdEmail className="h-6 w-6" />}>
+                    <Link to="/admin/correo/crear">Crear Correo</Link>
+                    <Link to="/admin/correo/listar">Listar Correo</Link>
+                </MenuItem>
+                
+            </div>
 
             {/* Logout Button */}
             <motion.div 
