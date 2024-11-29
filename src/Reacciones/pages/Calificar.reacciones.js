@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import useApiFunctions from '../../Hoook/ApiFunc';
+import { crearCalificacion } from '../api/apiPost';
 import { useNavigate } from 'react-router-dom';
 import useScreenSize from "../../shared/hooks/useScreenSize";
+import { useAuth } from '../../useContext';
 
 function CarasSeleccionar({ isDarkMode }) {
   const [calificacionEnviada, setCalificacionEnviada] = useState(null);
   const [faceSelected, setFaceSelected] = useState(null);
-  const { crearTodo } = useApiFunctions();
   const [selectedCount, setSelectedCount] = useState(0);
   const navigate = useNavigate();
   const { deviceType } = useScreenSize();
-
+  const { token } = useAuth();
   const styles = {
     mobile: {
       container: "relative h-screen overflow-hidden",
@@ -57,7 +57,8 @@ function CarasSeleccionar({ isDarkMode }) {
     localStorage.setItem('selectedCount', newCount);
 
     const formulario = { nombre: calificacion };
-    const response = await crearTodo('calificacion', null, formulario);
+    const response = await crearCalificacion(token, formulario);
+    console.log('Respuesta de creación de calificación:', response);
     
     if (response.status === 201) {
       setCalificacionEnviada(calificacion);

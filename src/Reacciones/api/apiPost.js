@@ -13,3 +13,16 @@ export const obtenerCalificaicones = async (formData, token) => {
         throw error;
     }
 };
+
+export const crearCalificacion = async (token, formData) => {
+    try {
+        const response = await axios.post(serverUrl + `/calificacion`, formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
