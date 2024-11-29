@@ -21,6 +21,7 @@ import CrearUsuarios from './Usuarios/pages/FormCrear.usuarios';
 import ListarUsuarios from './Usuarios/pages/TablaListar.usuarios';
 import ListarReacciones from './Reacciones/pages/Listar.reacciones';
 import CrearCorreo from './Email/pages/FormCrear.email';
+import {ListarCorreo} from './Email/pages/CorreoListar.email';
 
 const routesByRole = {
   Usuario: [
@@ -46,6 +47,7 @@ const routesByRole = {
     { path: '/admin/usuario/listar', component: ListarUsuarios },
     { path: '/admin/calificaciones/listar', component: ListarReacciones },
     { path: '/admin/correo/crear', component: CrearCorreo },
+    { path: '/admin/correo/listar', component: ListarCorreo },
   ],
 };
 

@@ -163,6 +163,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             </MenuItem>
             <MenuItem label="Correo" icon={<MdEmail className="h-6 w-6" />}>
                 <Link to="/admin/correo/crear">Crear Correo</Link>
+                <Link to="/admin/correo/listar">Listar Correo</Link>
             </MenuItem>
 
             {/* Logout Button */}

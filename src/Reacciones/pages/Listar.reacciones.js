@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Download, X, ChevronDown } from 'lucide-react';
+import { Calendar, Download, Table, PieChart, X, ChevronDown } from 'lucide-react';
 import { PieChart as RechartsChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import * as XLSX from 'xlsx';
 import { obtenerSucursalId, obtenerEmpresas } from '../api/apiGet';
@@ -17,6 +17,7 @@ const ListarReacciones = () => {
   const [dataBySucursal, setDataBySucursal] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [view, setView] = useState('chart'); // New state to toggle between chart and table view
   const [empresaSearchTerm, setEmpresaSearchTerm] = useState('');
   const [sucursalSearchTerm, setSucursalSearchTerm] = useState('');
   const { token } = useAuth();
@@ -287,8 +288,8 @@ const ListarReacciones = () => {
               </motion.div>
             )}
 
-            {/* Resultados por sucursal */}
-            {Object.keys(dataBySucursal).length > 0 && (
+             {/* Results section */}
+             {Object.keys(dataBySucursal).length > 0 && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -299,15 +300,34 @@ const ListarReacciones = () => {
                   <h3 className="text-xl font-semibold text-gray-800">
                     Resultados de {selectedSucursales.length} sucursal{selectedSucursales.length !== 1 ? 'es' : ''}
                   </h3>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={exportToExcel}
-                    className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
-                  >
-                    <Download size={20} />
-                    <span>Exportar a Excel</span>
-                  </motion.button>
+                  <div className="flex items-center space-x-4">
+                    {/* View Toggle */}
+                    <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+                      <button
+                        onClick={() => setView('chart')}
+                        className={`p-2 rounded-md transition-all ${view === 'chart' ? 'bg-white shadow-md' : 'hover:bg-gray-200'}`}
+                      >
+                        <PieChart size={20} />
+                      </button>
+                      <button
+                        onClick={() => setView('table')}
+                        className={`p-2 rounded-md transition-all ${view === 'table' ? 'bg-white shadow-md' : 'hover:bg-gray-200'}`}
+                      >
+                        <Table size={20} />
+                      </button>
+                    </div>
+
+                    {/* Export Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={exportToExcel}
+                      className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                    >
+                      <Download size={20} />
+                      <span>Exportar a Excel</span>
+                    </motion.button>
+                  </div>
                 </div>
 
                 {selectedSucursales.map(sucursalId => (
@@ -322,106 +342,210 @@ const ListarReacciones = () => {
                       {getSucursalNombre(sucursalId)}
                     </h3>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Pie Chart */}
-                      <motion.div 
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        className="bg-white rounded-lg shadow-lg overflow-hidden"
-                      >
-                        <div className="p-4 border-b border-gray-200">
-                          <h4 className="text-lg font-semibold text-gray-800">Distribución de Calificaciones</h4>
-                        </div>
-                        <div className="p-4">
-                          <div className="h-[400px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <RechartsChart>
-                                <Pie
-                                  data={getPieChartData(sucursalId)}
-                                  dataKey="value"
-                                  nameKey="name"
-                                  cx="50%"
-                                  cy="50%"
-                                  outerRadius={150}
-                                  label
-                                >
-                                  {getPieChartData(sucursalId).map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                  ))}
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                              </RechartsChart>
-                            </ResponsiveContainer>
+                    {/* Conditional Rendering: Chart vs Table */}
+                    {view === 'chart' ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Pie Chart */}
+                        <motion.div 
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          className="bg-white rounded-lg shadow-lg overflow-hidden"
+                        >
+                          <div className="p-4 border-b border-gray-200">
+                            <h4 className="text-lg font-semibold text-gray-800">Distribución de Calificaciones</h4>
                           </div>
-                        </div>
-                      </motion.div>
-
-                      {/* Summary */}
-                      <motion.div 
-                        initial={{ x: 20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        className="bg-white rounded-lg shadow-lg overflow-hidden"
-                      >
-                        <div className="p-4 border-b border-gray-200">
-                          <h4 className="text-lg font-semibold text-gray-800">Resumen de Calificaciones</h4>
-                        </div>
-                        <div className="p-4">
-                          <div className="space-y-4">
-                          {Object.entries(dataBySucursal[sucursalId]?.totalCalificaciones || {}).sort((a, b) => {
-                              // Aquí defines el orden según las claves. Puedes modificar este arreglo si lo necesitas.
-                              const order = ["excelente", "Bueno", "Regular", "Mala", "MuyMala"];
-                              return order.indexOf(a[0]) - order.indexOf(b[0]);
-                            }).map(([key, value]) => {
-                              let displayName = "";
-                              let emoji = "";
-
-                              switch (key) {
-                                case "excelente":
-                                  displayName = "Muy Bueno";
-                                  emoji = "🌟";
-                                  break;
-                                case "Bueno":
-                                  displayName = "Bueno";
-                                  emoji = "👍";
-                                  break;
-                                case "Regular":
-                                  displayName = "Regular";
-                                  emoji = "😐";
-                                  break;
-                                case "Mala":
-                                  displayName = "Deficiente";
-                                  emoji = "👎";
-                                  break;
-                                case "MuyMala":
-                                  displayName = "Malo";
-                                  emoji = "💔";
-                                  break;
-                                default:
-                                  displayName = key; // En caso de que no haya transformación
-                                  emoji = ""; // No se añade emoji si el key no se transforma
-                              }
-
-                              return (
-                                <motion.div 
-                                  key={key}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ delay: 0.2 }}
-                                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-                                >
-                                  <span className="font-medium text-gray-700">{displayName} {emoji}</span>
-                                  <span className="text-2xl font-bold text-gray-900">{value}</span>
-                                </motion.div>
-                              );
-                            })}
-
-
-
+                          <div className="p-4">
+                            <div className="h-[400px]">
+                              <ResponsiveContainer width="100%" height="100%">
+                                <RechartsChart>
+                                  <Pie
+                                    data={getPieChartData(sucursalId)}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={150}
+                                    label
+                                  >
+                                    {getPieChartData(sucursalId).map((entry, index) => (
+                                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip />
+                                  <Legend />
+                                </RechartsChart>
+                              </ResponsiveContainer>
+                            </div>
                           </div>
-                        </div>
+                        </motion.div>
+
+                        {/* Summary */}
+                        <motion.div 
+                          initial={{ x: 20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          className="bg-white rounded-lg shadow-lg overflow-hidden"
+                        >
+                          <div className="p-4 border-b border-gray-200">
+                            <h4 className="text-lg font-semibold text-gray-800">Resumen de Calificaciones</h4>
+                          </div>
+                          <div className="p-4">
+                            <div className="space-y-4">
+                              {Object.entries(dataBySucursal[sucursalId]?.totalCalificaciones || {})
+                                .sort((a, b) => {
+                                  const order = ["excelente", "Bueno", "Regular", "Mala", "MuyMala"];
+                                  return order.indexOf(a[0]) - order.indexOf(b[0]);
+                                })
+                                .map(([key, value]) => {
+                                  let displayName = "";
+                                  let emoji = "";
+
+                                  switch (key) {
+                                    case "excelente":
+                                      displayName = "Muy Bueno";
+                                      emoji = "🌟";
+                                      break;
+                                    case "Bueno":
+                                      displayName = "Bueno";
+                                      emoji = "👍";
+                                      break;
+                                    case "Regular":
+                                      displayName = "Regular";
+                                      emoji = "😐";
+                                      break;
+                                    case "Mala":
+                                      displayName = "Deficiente";
+                                      emoji = "👎";
+                                      break;
+                                    case "MuyMala":
+                                      displayName = "Malo";
+                                      emoji = "💔";
+                                      break;
+                                    default:
+                                      displayName = key;
+                                      emoji = "";
+                                  }
+
+                                  return (
+                                    <motion.div 
+                                      key={key}
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      transition={{ delay: 0.2 }}
+                                      className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                                    >
+                                      <span className="font-medium text-gray-700">{displayName} {emoji}</span>
+                                      <span className="text-2xl font-bold text-gray-900">{value}</span>
+                                    </motion.div>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        </motion.div>
+                      </div>
+                    ) : (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="overflow-x-auto"
+                      >
+                        <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                          <thead className="bg-gray-100">
+                            <tr>
+                              {/* Add a first column for metrics/dates */}
+                              <th className="p-4 text-left font-semibold text-gray-700 border-b">Métrica</th>
+                              
+                              {/* Dynamic category headers */}
+                              {Object.entries(dataBySucursal[sucursalId]?.totalCalificaciones || {})
+                                .sort((a, b) => {
+                                  const order = ["excelente", "Bueno", "Regular", "Mala", "MuyMala"];
+                                  return order.indexOf(a[0]) - order.indexOf(b[0]);
+                                })
+                                .map(([key]) => {
+                                  let displayName = "";
+                                  let emoji = "";
+
+                                  switch (key) {
+                                    case "excelente":
+                                      displayName = "Muy Bueno";
+                                      emoji = "🌟";
+                                      break;
+                                    case "Bueno":
+                                      displayName = "Bueno";
+                                      emoji = "👍";
+                                      break;
+                                    case "Regular":
+                                      displayName = "Regular";
+                                      emoji = "😐";
+                                      break;
+                                    case "Mala":
+                                      displayName = "Deficiente";
+                                      emoji = "👎";
+                                      break;
+                                    case "MuyMala":
+                                      displayName = "Malo";
+                                      emoji = "💔";
+                                      break;
+                                    default:
+                                      displayName = key;
+                                  }
+
+                                  return (
+                                    <th 
+                                      key={key}
+                                      className="p-4 text-center font-semibold text-gray-700 border-b"
+                                    >
+                                      {displayName} {emoji}
+                                    </th>
+                                  );
+                                })}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {/* Total Cantidad */}
+                            <tr className="hover:bg-gray-50 transition">
+                              <td className="p-4 font-medium text-gray-700 border-b">Cantidad</td>
+                              {Object.entries(dataBySucursal[sucursalId]?.totalCalificaciones || {})
+                                .sort((a, b) => {
+                                  const order = ["excelente", "Bueno", "Regular", "Mala", "MuyMala"];
+                                  return order.indexOf(a[0]) - order.indexOf(b[0]);
+                                })
+                                .map(([key, value]) => (
+                                  <td 
+                                    key={key}
+                                    className="p-4 text-center font-bold text-gray-900 border-b"
+                                  >
+                                    {value}
+                                  </td>
+                                ))}
+                            </tr>
+
+                            {/* Percentage Calculation */}
+                            <tr className="hover:bg-gray-50 transition">
+                              <td className="p-4 font-medium text-gray-700 border-b">Porcentaje</td>
+                              {Object.entries(dataBySucursal[sucursalId]?.totalCalificaciones || {})
+                                .sort((a, b) => {
+                                  const order = ["excelente", "Bueno", "Regular", "Mala", "MuyMala"];
+                                  return order.indexOf(a[0]) - order.indexOf(b[0]);
+                                })
+                                .map(([key, value]) => {
+                                  const total = Object.values(dataBySucursal[sucursalId]?.totalCalificaciones || {})
+                                    .reduce((a, b) => a + b, 0);
+                                  const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : 0;
+                                  
+                                  return (
+                                    <td 
+                                      key={key}
+                                      className="p-4 text-center font-bold text-gray-700 border-b"
+                                    >
+                                      {percentage}%
+                                    </td>
+                                  );
+                                })}
+                            </tr>
+                          </tbody>
+                        </table>
                       </motion.div>
-                    </div>
+                    )}
                   </motion.div>
                 ))}
               </motion.div>
