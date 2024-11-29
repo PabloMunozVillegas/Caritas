@@ -11,12 +11,11 @@ import {
     CloudUpload, 
     Users 
 } from 'lucide-react';
-import useApiFunctions from '../../Hoook/ApiFunc';
 import { useAuth } from '../../useContext';
-import { obtenerCorreo } from '../api/apiGet';
+import { enviarCorreo } from '../api/apiGet';
+import { crearCorreo, crearCongfiguracion} from '../api/apiPost';
 
 const CrearCorreo = () => {
-    const { crearTodo } = useApiFunctions();
     const { token } = useAuth();
 
     // Server Configuration State
@@ -55,8 +54,8 @@ const CrearCorreo = () => {
     // Save Server Configuration
     const handleSaveConfig = async () => {
         try {
-            await crearTodo('crearCongfiguracion', '', serverConfig);
-            alert('Configuración guardada exitosamente');
+            const response = await crearCongfiguracion(token, serverConfig);
+            console.log('Respuesta de configuración:', response);
         } catch (error) {
             alert('Error al guardar configuración');
         }
@@ -109,8 +108,8 @@ const CrearCorreo = () => {
     // Send Email Methods
     const handleSendEmail = async () => {
         try {
-            const response = await crearTodo('crearEmail', '', emailData);
-            alert('Correo guardado exitosamente');
+            const response = await crearCorreo(token, emailData);
+            console.log('Respuesta de creación:', response);
         } catch (error) {
             alert('Error al guardar correo');
         }
@@ -120,7 +119,7 @@ const CrearCorreo = () => {
         try {
             switch(method) {
                 case 'immediate':
-                    const immediateResponse = await obtenerCorreo(token);
+                    const immediateResponse = await enviarCorreo(token);
                     alert('Correo enviado inmediatamente');
                     break;
                 case 'background':
